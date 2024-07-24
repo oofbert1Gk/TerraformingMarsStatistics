@@ -120,10 +120,6 @@ insert2 = ("INSERT INTO ScoreByCategory "
                "(tr,milestones,awards,greeneries,cities,ev,habitats,mines,roads,pathfinders,cards,total, gameNumber)"
                "VALUES (" + ScoreByCategory[0]+","+ScoreByCategory[1]+","+ScoreByCategory[2]+","+ScoreByCategory[3]+","+ScoreByCategory[4]+","+ScoreByCategory[5]+","+ScoreByCategory[6]+","+ScoreByCategory[7]+","+ScoreByCategory[8]+","+ScoreByCategory[9]+","+ScoreByCategory[10]+","+ScoreByCategory[11]+","+ScoreByCategory[12]+")")
 
-### defining insert command, this will be veyr very messsy  
-
-#making a string that has all the column names in it seperated by commas (note: they are currently all called gen(number))
-
 columns=""
 for i in range(len(ScoreByGeneration)):
     columns=columns+("gen" + str(i+1)+",")

@@ -10,12 +10,18 @@ cnx = mysql.connector.connect(user='python', password='pythonPassword',
 cursor = cnx.cursor()
 
 #Creating scatter plot which compares two columns, this will only work if both of the collumns only contain ints
-tablex=input("Enter table for x collumn: ")
-tabley=input("Enter table for y collumn: ")
-x=input("Enter collumn to select for x:")
-y=input("Enter collumn to select for y:")
+xTable=input("Enter table for x collumn: ")
+yTable=input("Enter table for y collumn: ")
+xColumn=input("Enter collumn to select for x: ")
+yColumn=input("Enter collumn to select for y: ")
 
+xQuery=cursor.excecute("select " + xColumn + "  from " + xTable)
+yQuery=cursor.excecute("select " + yColumn + "  from " + yTable)
 
+x=cursor.execute(xQuery)
+y=cursor.execute(yQuery)
+print(x)
+print(y)
 cursor.close()
 cnx.close()
 
