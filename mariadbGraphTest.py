@@ -10,25 +10,32 @@ cnx = mysql.connector.connect(user='python', password='pythonPassword',
 cursor = cnx.cursor()
 
 #Creating scatter plot which compares two columns, this will only work if both of the collumns only contain ints
-xTable=input("Enter table for x collumn: ")
-yTable=input("Enter table for y collumn: ")
-xColumn=input("Enter collumn to select for x: ")
-yColumn=input("Enter collumn to select for y: ")
 
-xQuery=cursor.excecute("select " + xColumn + "  from " + xTable)
-yQuery=cursor.excecute("select " + yColumn + "  from " + yTable)
+#xTable=input("Enter table for x collumn: ")
+#yTable=input("Enter table for y collumn: ")
+#xColumn=input("Enter collumn to select for x: ")
+#yColumn=input("Enter collumn to select for y: ")
+xTable="ScoreByCategory"
+yTable="ScoreByCategory"
+xColumn="greeneries"
+yColumn="cities"
 
-x=cursor.execute(xQuery)
-y=cursor.execute(yQuery)
-print(x)
-print(y)
-cursor.close()
-cnx.close()
+xQuery=cursor.execute("select " + xColumn + "  from " + xTable)
+x=cursor.fetchall()
+yQuery=cursor.execute("select " + yColumn + "  from " + yTable)
+y=cursor.fetchall()
 
-
-#testing scatter graphs  
-x = np.array([1,3,2,5,7])
-y = np.array([1,2,3,4,5])
+for i in range(len(x)):
+    x[i]=int(x[i][0])
+    y[i]=int(y[i][0])
 
 plt.scatter(x,y)
 plt.show()
+
+
+
+cursor.close()
+cnx.close()
+
+#testing scatter graphs  
+
