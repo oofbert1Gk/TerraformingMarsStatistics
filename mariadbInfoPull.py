@@ -56,7 +56,6 @@ def scatter2columns():
     
     plt.show()
 
-scatter2columns()
 
 cursor.close()
 cnx.close()
