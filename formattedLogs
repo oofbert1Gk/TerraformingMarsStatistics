@@ -1,148 +1,6 @@
 [
   {
-    "message": "${0} increased ${1} colony track ${2} step(s)",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 6,
-        "value": "Luna"
-      },
-      {
-        "type": 1,
-        "value": "2"
-      }
-    ],
-    "timestamp": 1719126075763
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "megacredits"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "10"
-      }
-    ],
-    "timestamp": 1719126075763
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "megacredits"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "2"
-      }
-    ],
-    "timestamp": 1719126075763
-  },
-  {
-    "message": "${0} spent ${1} energy to trade with ${2}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 1,
-        "value": "3"
-      },
-      {
-        "type": 6,
-        "value": "Europa"
-      }
-    ],
-    "timestamp": 1719126081715
-  },
-  {
-    "message": "${0} increased ${1} colony track ${2} step(s)",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 6,
-        "value": "Europa"
-      },
-      {
-        "type": 1,
-        "value": "2"
-      }
-    ],
-    "timestamp": 1719126086344
-  },
-  {
-    "message": "${0}'s ${1} production ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "plants"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      }
-    ],
-    "timestamp": 1719126086344
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "megacredits"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      }
-    ],
-    "timestamp": 1719126086344
-  },
-  {
-    "message": "${0} played ${1}",
+    "message": "${0} used ${1} action",
     "data": [
       {
         "type": 2,
@@ -150,10 +8,122 @@
       },
       {
         "type": 3,
-        "value": "Herbivores"
+        "value": "Orbital Cleanup"
       }
     ],
-    "timestamp": 1719126090700
+    "timestamp": 1722236764608
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "megacredits"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "26"
+      }
+    ],
+    "timestamp": 1722236764609
+  },
+  {
+    "message": "${0} used ${1} action",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "Martian Zoo"
+      }
+    ],
+    "timestamp": 1722236766876
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "megacredits"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "8"
+      }
+    ],
+    "timestamp": 1722236766876
+  },
+  {
+    "message": "${0} used ${1} action",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "Asteroid Rights"
+      }
+    ],
+    "timestamp": 1722236768976
+  },
+  {
+    "message": "${0} removed ${1} ${2} from ${3} to ${4}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "asteroid(s)"
+      },
+      {
+        "type": 3,
+        "value": "Asteroid Rights"
+      },
+      {
+        "type": 0,
+        "value": "increase M€ production 1 step"
+      }
+    ],
+    "timestamp": 1722236772853
+  },
+  {
+    "message": "${0} used ${1} action",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "Stratospheric Birds"
+      }
+    ],
+    "timestamp": 1722236774777
   },
   {
     "message": "${0} added ${1} ${2} to ${3}",
@@ -172,32 +142,46 @@
       },
       {
         "type": 3,
-        "value": "Herbivores"
+        "value": "Stratospheric Birds"
       }
     ],
-    "timestamp": 1719126090701
+    "timestamp": 1722236774777
   },
   {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "message": "${0} used ${1} action",
     "data": [
       {
         "type": 2,
         "value": "red"
       },
       {
-        "type": 0,
-        "value": "megacredits"
-      },
+        "type": 3,
+        "value": "Venusian Insects"
+      }
+    ],
+    "timestamp": 1722236776649
+  },
+  {
+    "message": "${0} added ${1} ${2} to ${3}",
+    "data": [
       {
-        "type": 0,
-        "value": "increased"
+        "type": 2,
+        "value": "red"
       },
       {
         "type": 1,
-        "value": "2"
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "microbe(s)"
+      },
+      {
+        "type": 3,
+        "value": "Venusian Insects"
       }
     ],
-    "timestamp": 1719126090701
+    "timestamp": 1722236776649
   },
   {
     "message": "${0} used ${1} standard project",
@@ -211,7 +195,7 @@
         "value": "Greenery"
       }
     ],
-    "timestamp": 1719126093655
+    "timestamp": 1722236783052
   },
   {
     "message": "${0} ${1} ${2} on row ${3} position ${4}",
@@ -230,47 +214,14 @@
       },
       {
         "type": 1,
-        "value": "3"
+        "value": "7"
       },
       {
         "type": 1,
-        "value": "1"
+        "value": "2"
       }
     ],
-    "timestamp": 1719126098808
-  },
-  {
-    "message": "${0} ${1} ${2} card(s)",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "drew"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      }
-    ],
-    "timestamp": 1719126098808
-  },
-  {
-    "message": "${0} drew ${1}",
-    "data": [
-      {
-        "type": 0,
-        "value": "You"
-      },
-      {
-        "type": 3,
-        "value": "Ore Processor"
-      }
-    ],
-    "timestamp": 1719126098808,
-    "playerId": "p7852913a0829"
+    "timestamp": 1722236786020
   },
   {
     "message": "${0} added ${1} ${2} to ${3}",
@@ -292,7 +243,7 @@
         "value": "Herbivores"
       }
     ],
-    "timestamp": 1719126098808
+    "timestamp": 1722236786020
   },
   {
     "message": "${0} used ${1} standard project",
@@ -306,7 +257,237 @@
         "value": "Greenery"
       }
     ],
-    "timestamp": 1719126104177
+    "timestamp": 1722236789257
+  },
+  {
+    "message": "${0} ${1} ${2} on row ${3} position ${4}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "placed"
+      },
+      {
+        "type": 0,
+        "value": "greenery tile"
+      },
+      {
+        "type": 1,
+        "value": "8"
+      },
+      {
+        "type": 1,
+        "value": "2"
+      }
+    ],
+    "timestamp": 1722236794764
+  },
+  {
+    "message": "${0} added ${1} ${2} to ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "animal(s)"
+      },
+      {
+        "type": 3,
+        "value": "Herbivores"
+      }
+    ],
+    "timestamp": 1722236794764
+  },
+  {
+    "message": "${0} used ${1} standard project",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "City"
+      }
+    ],
+    "timestamp": 1722236797822
+  },
+  {
+    "message": "${0} ${1} ${2} on row ${3} position ${4}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "placed"
+      },
+      {
+        "type": 0,
+        "value": "city tile"
+      },
+      {
+        "type": 1,
+        "value": "4"
+      },
+      {
+        "type": 1,
+        "value": "3"
+      }
+    ],
+    "timestamp": 1722236799857
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "plants"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      }
+    ],
+    "timestamp": 1722236799857
+  },
+  {
+    "message": "${0} added ${1} ${2} to ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "animal(s)"
+      },
+      {
+        "type": 3,
+        "value": "Pets"
+      }
+    ],
+    "timestamp": 1722236799857
+  },
+  {
+    "message": "${0} used ${1} standard project",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "Greenery"
+      }
+    ],
+    "timestamp": 1722236803475
+  },
+  {
+    "message": "${0} ${1} ${2} on row ${3} position ${4}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "placed"
+      },
+      {
+        "type": 0,
+        "value": "greenery tile"
+      },
+      {
+        "type": 1,
+        "value": "4"
+      },
+      {
+        "type": 1,
+        "value": "4"
+      }
+    ],
+    "timestamp": 1722236805548
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "plants"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      }
+    ],
+    "timestamp": 1722236805548
+  },
+  {
+    "message": "${0} added ${1} ${2} to ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "animal(s)"
+      },
+      {
+        "type": 3,
+        "value": "Herbivores"
+      }
+    ],
+    "timestamp": 1722236805548
+  },
+  {
+    "message": "${0} used ${1} standard project",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "Greenery"
+      }
+    ],
+    "timestamp": 1722236811699
   },
   {
     "message": "${0} ${1} ${2} on row ${3} position ${4}",
@@ -332,7 +513,7 @@
         "value": "2"
       }
     ],
-    "timestamp": 1719126106209
+    "timestamp": 1722236814120
   },
   {
     "message": "${0}'s ${1} amount ${2} by ${3}",
@@ -354,7 +535,7 @@
         "value": "1"
       }
     ],
-    "timestamp": 1719126106209
+    "timestamp": 1722236814120
   },
   {
     "message": "${0} added ${1} ${2} to ${3}",
@@ -376,193 +557,7 @@
         "value": "Herbivores"
       }
     ],
-    "timestamp": 1719126106210
-  },
-  {
-    "message": "${0} used ${1} standard project",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 3,
-        "value": "Aquifer"
-      }
-    ],
-    "timestamp": 1719126110276
-  },
-  {
-    "message": "${0} ${1} ${2} on row ${3} position ${4}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "placed"
-      },
-      {
-        "type": 0,
-        "value": "ocean tile"
-      },
-      {
-        "type": 1,
-        "value": "5"
-      },
-      {
-        "type": 1,
-        "value": "4"
-      }
-    ],
-    "timestamp": 1719126112624
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "plants"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "2"
-      }
-    ],
-    "timestamp": 1719126112624
-  },
-  {
-    "message": "${0} used ${1} standard action",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 3,
-        "value": "Convert Plants"
-      }
-    ],
-    "timestamp": 1719126116281
-  },
-  {
-    "message": "${0} ${1} ${2} on row ${3} position ${4}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "placed"
-      },
-      {
-        "type": 0,
-        "value": "greenery tile"
-      },
-      {
-        "type": 1,
-        "value": "4"
-      },
-      {
-        "type": 1,
-        "value": "3"
-      }
-    ],
-    "timestamp": 1719126116281
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "plants"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      }
-    ],
-    "timestamp": 1719126116281
-  },
-  {
-    "message": "${0} must select ${1} bonus resource(s) from ${2}' ability",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      },
-      {
-        "type": 3,
-        "value": "Philares"
-      }
-    ],
-    "timestamp": 1719126116281
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "plants"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      }
-    ],
-    "timestamp": 1719126119958
-  },
-  {
-    "message": "${0} added ${1} ${2} to ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      },
-      {
-        "type": 0,
-        "value": "animal(s)"
-      },
-      {
-        "type": 3,
-        "value": "Herbivores"
-      }
-    ],
-    "timestamp": 1719126119958
+    "timestamp": 1722236814121
   },
   {
     "message": "${0} used ${1} standard project",
@@ -576,109 +571,7 @@
         "value": "Greenery"
       }
     ],
-    "timestamp": 1719126122562
-  },
-  {
-    "message": "${0} ${1} ${2} on row ${3} position ${4}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "placed"
-      },
-      {
-        "type": 0,
-        "value": "greenery tile"
-      },
-      {
-        "type": 1,
-        "value": "3"
-      },
-      {
-        "type": 1,
-        "value": "3"
-      }
-    ],
-    "timestamp": 1719126125702
-  },
-  {
-    "message": "${0} must select ${1} bonus resource(s) from ${2}' ability",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 1,
-        "value": "2"
-      },
-      {
-        "type": 3,
-        "value": "Philares"
-      }
-    ],
-    "timestamp": 1719126125703
-  },
-  {
-    "message": "${0}'s ${1} amount ${2} by ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 0,
-        "value": "plants"
-      },
-      {
-        "type": 0,
-        "value": "increased"
-      },
-      {
-        "type": 1,
-        "value": "2"
-      }
-    ],
-    "timestamp": 1719126128904
-  },
-  {
-    "message": "${0} added ${1} ${2} to ${3}",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 1,
-        "value": "1"
-      },
-      {
-        "type": 0,
-        "value": "animal(s)"
-      },
-      {
-        "type": 3,
-        "value": "Herbivores"
-      }
-    ],
-    "timestamp": 1719126128904
-  },
-  {
-    "message": "${0} used ${1} standard project",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 3,
-        "value": "Greenery"
-      }
-    ],
-    "timestamp": 1719126131805
+    "timestamp": 1722236817799
   },
   {
     "message": "${0} ${1} ${2} on row ${3} position ${4}",
@@ -704,7 +597,7 @@
         "value": "2"
       }
     ],
-    "timestamp": 1719126133651
+    "timestamp": 1722236820303
   },
   {
     "message": "${0}'s ${1} amount ${2} by ${3}",
@@ -726,7 +619,7 @@
         "value": "2"
       }
     ],
-    "timestamp": 1719126133651
+    "timestamp": 1722236820303
   },
   {
     "message": "${0} added ${1} ${2} to ${3}",
@@ -748,7 +641,7 @@
         "value": "Herbivores"
       }
     ],
-    "timestamp": 1719126133651
+    "timestamp": 1722236820303
   },
   {
     "message": "${0} used ${1} standard action",
@@ -762,7 +655,7 @@
         "value": "Convert Plants"
       }
     ],
-    "timestamp": 1719126136056
+    "timestamp": 1722236827671
   },
   {
     "message": "${0} ${1} ${2} on row ${3} position ${4}",
@@ -781,14 +674,36 @@
       },
       {
         "type": 1,
-        "value": "2"
+        "value": "6"
       },
       {
         "type": 1,
         "value": "1"
       }
     ],
-    "timestamp": 1719126136056
+    "timestamp": 1722236827671
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "plants"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      }
+    ],
+    "timestamp": 1722236827671
   },
   {
     "message": "${0} added ${1} ${2} to ${3}",
@@ -810,7 +725,7 @@
         "value": "Herbivores"
       }
     ],
-    "timestamp": 1719126136056
+    "timestamp": 1722236827671
   },
   {
     "message": "${0} used ${1} standard project",
@@ -821,10 +736,80 @@
       },
       {
         "type": 3,
-        "value": "Asteroid:SP"
+        "value": "City"
       }
     ],
-    "timestamp": 1719126144462
+    "timestamp": 1722236832237
+  },
+  {
+    "message": "${0} ${1} ${2} on row ${3} position ${4}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "placed"
+      },
+      {
+        "type": 0,
+        "value": "city tile"
+      },
+      {
+        "type": 1,
+        "value": "6"
+      },
+      {
+        "type": 1,
+        "value": "2"
+      }
+    ],
+    "timestamp": 1722236837331
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "plants"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "2"
+      }
+    ],
+    "timestamp": 1722236837331
+  },
+  {
+    "message": "${0} added ${1} ${2} to ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "animal(s)"
+      },
+      {
+        "type": 3,
+        "value": "Pets"
+      }
+    ],
+    "timestamp": 1722236837331
   },
   {
     "message": "${0} used ${1} standard project",
@@ -835,10 +820,60 @@
       },
       {
         "type": 3,
-        "value": "Asteroid:SP"
+        "value": "Sell Patents"
       }
     ],
-    "timestamp": 1719126146924
+    "timestamp": 1722236846651
+  },
+  {
+    "message": "${0} sold ${1} patents",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "7"
+      }
+    ],
+    "timestamp": 1722236846651
+  },
+  {
+    "message": "${0} used ${1} action",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 3,
+        "value": "Red Ships"
+      }
+    ],
+    "timestamp": 1722236848669
+  },
+  {
+    "message": "${0}'s ${1} amount ${2} by ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "megacredits"
+      },
+      {
+        "type": 0,
+        "value": "increased"
+      },
+      {
+        "type": 1,
+        "value": "6"
+      }
+    ],
+    "timestamp": 1722236848669
   },
   {
     "message": "${0} used ${1} standard project",
@@ -849,52 +884,10 @@
       },
       {
         "type": 3,
-        "value": "Asteroid:SP"
+        "value": "Air Scrapping"
       }
     ],
-    "timestamp": 1719126149335
-  },
-  {
-    "message": "${0} used ${1} standard project",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 3,
-        "value": "Asteroid:SP"
-      }
-    ],
-    "timestamp": 1719126152278
-  },
-  {
-    "message": "${0} used ${1} standard project",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 3,
-        "value": "Asteroid:SP"
-      }
-    ],
-    "timestamp": 1719126155136
-  },
-  {
-    "message": "${0} used ${1} standard project",
-    "data": [
-      {
-        "type": 2,
-        "value": "red"
-      },
-      {
-        "type": 3,
-        "value": "Asteroid:SP"
-      }
-    ],
-    "timestamp": 1719126158462
+    "timestamp": 1722236860976
   },
   {
     "message": "${0} passed",
@@ -904,28 +897,70 @@
         "value": "red"
       }
     ],
-    "timestamp": 1719126162683
+    "timestamp": 1722236863772
   },
   {
     "message": "Final greenery placement",
     "data": [],
-    "timestamp": 1719126162686,
+    "timestamp": 1722236863775,
     "type": 1
   },
   {
-    "message": "Final greenery phase is skipped since you did not complete the win condition.",
-    "data": [],
-    "timestamp": 1719126162686,
-    "type": 1
+    "message": "${0} ${1} ${2} on row ${3} position ${4}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 0,
+        "value": "placed"
+      },
+      {
+        "type": 0,
+        "value": "greenery tile"
+      },
+      {
+        "type": 1,
+        "value": "7"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      }
+    ],
+    "timestamp": 1722236868219
+  },
+  {
+    "message": "${0} added ${1} ${2} to ${3}",
+    "data": [
+      {
+        "type": 2,
+        "value": "red"
+      },
+      {
+        "type": 1,
+        "value": "1"
+      },
+      {
+        "type": 0,
+        "value": "animal(s)"
+      },
+      {
+        "type": 3,
+        "value": "Herbivores"
+      }
+    ],
+    "timestamp": 1722236868219
   },
   {
     "message": "This game id was ${0}",
     "data": [
       {
         "type": 1,
-        "value": "g19382484171f"
+        "value": "gb12e61c7b609"
       }
     ],
-    "timestamp": 1719126162686
+    "timestamp": 1722236868219
   }
 ]
