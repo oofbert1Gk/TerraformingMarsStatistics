@@ -137,9 +137,9 @@ insert3 = ("INSERT INTO ScoreByGeneration"
 
 #Excecuting the command, commiting it to the dataubase and then closing the connection 
 
-#cursor.execute(insert1)
-#cursor.execute(insert2)
-#cursor.execute(insert3)
+cursor.execute(insert1)
+cursor.execute(insert2)
+cursor.execute(insert3)
 
 cnx.commit()
 
