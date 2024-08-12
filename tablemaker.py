@@ -106,9 +106,22 @@ tableDescription3 = (
     "  PRIMARY KEY (id)"
     ") ENGINE=InnoDB")
 
+#Note: All non fan made expansions is 400 cards, average card character length is at most 20 so we need varchar(8000) however there is fan made and accounting for extra expansions etc... Therefore to be safe I will store it as text which has a limit of ~2^16(65536) versus varchar which cna go up to 16383(~2^14) 
+
+tableDescription4 = (
+    "CREATE TABLE `CardsPlayed` ("
+    "  id MEDIUMINT NOT NULL AUTO_INCREMENT,"
+    "  `cards` TEXT,"
+    "  `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+    "  `gameNumber` SMALLINT,"
+    "  PRIMARY KEY (id)"
+    ") ENGINE=InnoDB")
+
 #executing the commands and then closing the connection 
 cursor.execute(tableDescription)
 cursor.execute(tableDescription2)
 cursor.execute(tableDescription3)
+cursor.execute(tableDescription4)
+
 cursor.close()
 cnx.close()
