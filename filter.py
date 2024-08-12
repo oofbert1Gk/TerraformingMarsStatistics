@@ -49,32 +49,20 @@ ScoreByCategory=re.sub( '[^0-9,,]','',(h[begin:end])).split(',')
 del(ScoreByCategory[12])
 
 #Getting all cards played
+#note: what is used instead of space here is very inconsistent, sometimes they use nothing, sometimes they use 
 
 begin=h.index('tableau')
 end=h.index('"selfReplicatingRobotsCards": [],')
 
 x=h[begin:end]
-x=x.replace(" ",'').replace("{",'').replace(",",'').replace('"','')
-x=x.split("\n")
+x=x.replace(" ",'').replace("{",'').replace(",",'').replace('"','').split("\n")
 
-cardsPlayed=[]
 
+CardsPlayed=""
 for i in range(len(x)):
     if "name" in x[i]:
-        a=x[i].replace("name:","")
-        cardsPlayed.append(a)
-print(cardsPlayed)
-
-
-
-
-
-
-
-
-
-
-
+        a=x[i].replace("name:","")+","
+        CardsPlayed+=a
 
 
 
@@ -97,14 +85,9 @@ b=str(cursor.fetchone())
 try:
     result=int(re.sub( '[^0-9]','',(b)))
 except:
-    r=0
+    gameNumber=0
 else:
-    r=int(re.sub( '[^0-9]','',(b)))+1
-
-
-    
-options.append(str(r))
-ScoreByCategory.append(str(r))
+    gameNumber=str(int(re.sub( '[^0-9]','',(b)))+1)
 
 cursor.close()
 cursor = cnx.cursor()
@@ -114,11 +97,13 @@ cursor = cnx.cursor()
 
 insert1 = ("INSERT INTO options "
                "(altVenusBoard, aresExtension, boardName, bannedCards, includedCards, ceoExtension, coloniesExtension, communityCardsOption, corporateEra, draftVariant, escapeVelocityMode, escapeVelocityBonusSeconds, fastModeOption, includeFanMA, includeVenusMA, initialDraftVariant, moonExpansion, pathfindersExpansion, preludeDraftVariant, preludeExtension, prelude2Expansion, promoCardsOption, politicalAgendasExtension, removeNegativeGlobalEvents, showOtherPlayersVP, showTimers, shuffleMapOption, solarPhaseOption, soloTR, randomMA, requiresMoonTrackCompletion, requiresVenusTrackCompletion, turmoilExtension, twoCorpsVariant, venusNextExtension, undoOption, underworldExpansion, gameNumber)"
-               "VALUES ('" + options[0]+"','"+options[1]+"','"+options[2]+"','"+options[3]+"','"+options[4]+"','"+options[5]+"','"+options[6]+"','"+options[7]+"','"+options[8]+"','"+options[9]+"','"+options[10]+"','"+options[11]+"','"+options[12]+"','"+options[13]+"','"+options[14]+"','"+options[15]+"','"+options[16]+"','"+options[17]+"','"+options[18]+"','"+options[19]+"','"+options[20]+"','"+options[21]+"','"+options[22]+"','"+options[23]+"','"+options[24]+"','"+options[25]+"','"+options[26]+"','"+options[27]+"','"+options[28]+"','"+options[29]+"','"+options[30]+"','"+options[31]+"','"+options[32]+"','"+options[33]+"','"+options[34]+"','"+options[35]+"','"+options[36]+"','"+options[37]+"')")
+               "VALUES ('" + options[0]+"','"+options[1]+"','"+options[2]+"','"+options[3]+"','"+options[4]+"','"+options[5]+"','"+options[6]+"','"+options[7]+"','"+options[8]+"','"+options[9]+"','"+options[10]+"','"+options[11]+"','"+options[12]+"','"+options[13]+"','"+options[14]+"','"+options[15]+"','"+options[16]+"','"+options[17]+"','"+options[18]+"','"+options[19]+"','"+options[20]+"','"+options[21]+"','"+options[22]+"','"+options[23]+"','"+options[24]+"','"+options[25]+"','"+options[26]+"','"+options[27]+"','"+options[28]+"','"+options[29]+"','"+options[30]+"','"+options[31]+"','"+options[32]+"','"+options[33]+"','"+options[34]+"','"+options[35]+"','"+options[36]+"','"+gameNumber+"')")
 
 insert2 = ("INSERT INTO ScoreByCategory "
                "(tr,milestones,awards,greeneries,cities,ev,habitats,mines,roads,pathfinders,cards,total, gameNumber)"
-               "VALUES (" + ScoreByCategory[0]+","+ScoreByCategory[1]+","+ScoreByCategory[2]+","+ScoreByCategory[3]+","+ScoreByCategory[4]+","+ScoreByCategory[5]+","+ScoreByCategory[6]+","+ScoreByCategory[7]+","+ScoreByCategory[8]+","+ScoreByCategory[9]+","+ScoreByCategory[10]+","+ScoreByCategory[11]+","+ScoreByCategory[12]+")")
+               "VALUES (" + ScoreByCategory[0]+","+ScoreByCategory[1]+","+ScoreByCategory[2]+","+ScoreByCategory[3]+","+ScoreByCategory[4]+","+ScoreByCategory[5]+","+ScoreByCategory[6]+","+ScoreByCategory[7]+","+ScoreByCategory[8]+","+ScoreByCategory[9]+","+ScoreByCategory[10]+","+ScoreByCategory[11]+","+gameNumber+")")
+
+insert3= ("INSERT INTO CardsPlayed ")
 
 columns=""
 for i in range(len(ScoreByGeneration)):
@@ -128,18 +113,26 @@ columns=columns+"gameNumber"
 values=""
 for i in range(len(ScoreByGeneration)):
     values=values+(ScoreByGeneration[i]+",")
-values=values+str(r)
+values=values+gameNumber
 
 insert3 = ("INSERT INTO ScoreByGeneration"
         "("+columns+")"
         "VALUES ("+values+")")
 
+insert4 = 'INSERT INTO CardsPlayed (cards, gameNumber) VALUES ("' + CardsPlayed + '",' + gameNumber + ')'
 
+
+
+#print("INSERT INTO CardsPlayed (cards, gameNumber) VALUES ('foobar|fdfd',8)")
 #Excecuting the command, commiting it to the dataubase and then closing the connection 
 
 cursor.execute(insert1)
 cursor.execute(insert2)
 cursor.execute(insert3)
+cursor.execute(insert4)
+
+
+
 
 cnx.commit()
 
