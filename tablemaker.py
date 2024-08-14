@@ -7,7 +7,7 @@ import mysql.connector
 #connecting to the server
 cnx = mysql.connector.connect(user='python', password='pythonPassword',
                               host='127.0.0.1',
-                              database='testF')
+                              database='tfm')
 cursor = cnx.cursor()
 
 #defining options table note: they are only temporarily set to varchar so I can make sure that rest actually works the format will be changed later 
@@ -17,8 +17,8 @@ tableDescription = (
     "  `altVenusBoard` VARCHAR(40) ,"
     "  `aresExtension` VARCHAR(40) ,"
     "  `boardName` VARCHAR(40) ,"
-    "  `bannedCards` VARCHAR(40) ,"
-    "  `includedCards` VARCHAR(40) ,"
+    "  `bannedCards` TEXT ,"
+    "  `includedCards` TEXT ,"
     "  `ceoExtension` VARCHAR(40) ,"
     "  `coloniesExtension` VARCHAR(40) ,"
     "  `communityCardsOption` VARCHAR(40) ,"
@@ -51,8 +51,6 @@ tableDescription = (
     "  `venusNextExtension` VARCHAR(40) ,"
     "  `undoOption` VARCHAR(40) ,"
     "  `underworldExpansion` VARCHAR(40) , "
-    "  `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP , "
-    "  `gameNumber` SMALLINT, "
     "  PRIMARY KEY (id)"
     ") ENGINE=InnoDB")
 
@@ -72,8 +70,6 @@ tableDescription2 = (
     "  `pathfinders` SMALLINT ," #Planetary Tracks
     "  `cards` SMALLINT SIGNED,"
     "  `total` SMALLINT SIGNED,"
-    "  `gameNumber` SMALLINT, "
-    "  `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP , "
     "  PRIMARY KEY (id)"
     ") ENGINE=InnoDB")
 
@@ -101,8 +97,6 @@ tableDescription3 = (
     "  `gen18` SMALLINT, "
     "  `gen19` SMALLINT, "
     "  `gen20` SMALLINT, "
-    "  `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP , "
-    "  `gameNumber` SMALLINT, "
     "  PRIMARY KEY (id)"
     ") ENGINE=InnoDB")
 
@@ -112,11 +106,21 @@ tableDescription4 = (
     "CREATE TABLE `CardsPlayed` ("
     "  id MEDIUMINT NOT NULL AUTO_INCREMENT,"
     "  `cards` TEXT,"
-    "  `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
-    "  `gameNumber` SMALLINT,"
     "  PRIMARY KEY (id)"
     ") ENGINE=InnoDB")
 
+tableDescription5 = (
+    "CREATE TABLE `metaData`"
+    " id MEDIUMINT NOT NULL AUTO_INCREMENT,"
+    " `rawData` MEDIUMTEXT,"
+    " `playerName` VARCHAR(100),"
+    " `won` BOOL,"
+    " `solo` BOOL,"
+    " `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP , "
+    "  `gameNumber` SMALLINT, "
+    " PRIMARY KEY (id) "
+    ") ENGINE=InnoDB")
+    
 #executing the commands and then closing the connection 
 cursor.execute(tableDescription)
 cursor.execute(tableDescription2)
