@@ -1,19 +1,16 @@
 from __future__ import print_function
 import mysql.connector
-
 import re 
 
 reads = open("formattedData","r")
 h = reads.read()
+
 
 #Input is the string and the location (a list with two num elements beginning and end) this is to remove all the spaces newlines etc... that are in the raw data file
 
 def stripSplit(string,location):
     s=(h[location[0]:location[1]]).replace(" ","").replace("\n","").replace('"',"").split(",")
     return(s)
-
-#testing
-
 
 #Getting options
 
@@ -34,8 +31,6 @@ l=[h.index("victoryPointsByGeneration")+30,h.index("corruption")-13]
 ScoreByGeneration=stripSplit(h,l)
 
 #Getting Generation
-
-#note: If the generation number is larger than 10^64 will be read wrong and will everything else shaved off, however if you have played that many generations you have a much bigger problem 
 f=h.index('"generation":')+13
 generation=re.sub( '[^0-9]','',(h[f:f+64]))
 
@@ -49,7 +44,6 @@ ScoreByCategory=re.sub( '[^0-9,,]','',(h[begin:end])).split(',')
 del(ScoreByCategory[12])
 
 #Getting all cards played
-#note: what is used instead of space here is very inconsistent, sometimes they use nothing, sometimes they use 
 
 begin=h.index('tableau')
 end=h.index('"selfReplicatingRobotsCards": [],')
@@ -65,16 +59,17 @@ for i in range(len(x)):
         CardsPlayed+=a
 
 
-
+    
+        
 #logging in to the mariadb database, this is not the permanent account I will be logging in with, if I actually host this then I will change this 
 cnx = mysql.connector.connect(user='python', password='pythonPassword',
                               host='127.0.0.1',
-                              database='testF')
+                              database='tfm')
 
 cursor = cnx.cursor(buffered=True)
 
 #defining the query command 
-query = ("SELECT gameNumber FROM ScoreByCategory ORDER BY id desc LIMIT 1")
+query = ("SELECT gameNumber FROM metaData ORDER BY id desc LIMIT 1")
 
 #excecuting the query 
 cursor.execute(query)
@@ -96,34 +91,42 @@ cursor = cnx.cursor()
 #note: I have defined the mariadb table for score by generation to only have a length of 20 therefore if for some reason it is longer than 20 generations the script will not work (metanote: real games will never take 20 generations)
 
 insert1 = ("INSERT INTO options "
-               "(altVenusBoard, aresExtension, boardName, bannedCards, includedCards, ceoExtension, coloniesExtension, communityCardsOption, corporateEra, draftVariant, escapeVelocityMode, escapeVelocityBonusSeconds, fastModeOption, includeFanMA, includeVenusMA, initialDraftVariant, moonExpansion, pathfindersExpansion, preludeDraftVariant, preludeExtension, prelude2Expansion, promoCardsOption, politicalAgendasExtension, removeNegativeGlobalEvents, showOtherPlayersVP, showTimers, shuffleMapOption, solarPhaseOption, soloTR, randomMA, requiresMoonTrackCompletion, requiresVenusTrackCompletion, turmoilExtension, twoCorpsVariant, venusNextExtension, undoOption, underworldExpansion, gameNumber)"
-               "VALUES ('" + options[0]+"','"+options[1]+"','"+options[2]+"','"+options[3]+"','"+options[4]+"','"+options[5]+"','"+options[6]+"','"+options[7]+"','"+options[8]+"','"+options[9]+"','"+options[10]+"','"+options[11]+"','"+options[12]+"','"+options[13]+"','"+options[14]+"','"+options[15]+"','"+options[16]+"','"+options[17]+"','"+options[18]+"','"+options[19]+"','"+options[20]+"','"+options[21]+"','"+options[22]+"','"+options[23]+"','"+options[24]+"','"+options[25]+"','"+options[26]+"','"+options[27]+"','"+options[28]+"','"+options[29]+"','"+options[30]+"','"+options[31]+"','"+options[32]+"','"+options[33]+"','"+options[34]+"','"+options[35]+"','"+options[36]+"','"+gameNumber+"')")
+               "(altVenusBoard, aresExtension, boardName, bannedCards, includedCards, ceoExtension, coloniesExtension, communityCardsOption, corporateEra, draftVariant, escapeVelocityMode, escapeVelocityBonusSeconds, fastModeOption, includeFanMA, includeVenusMA, initialDraftVariant, moonExpansion, pathfindersExpansion, preludeDraftVariant, preludeExtension, prelude2Expansion, promoCardsOption, politicalAgendasExtension, removeNegativeGlobalEvents, showOtherPlayersVP, showTimers, shuffleMapOption, solarPhaseOption, soloTR, randomMA, requiresMoonTrackCompletion, requiresVenusTrackCompletion, turmoilExtension, twoCorpsVariant, venusNextExtension, undoOption, underworldExpansion)"
+               "VALUES ('" + options[0]+"','"+options[1]+"','"+options[2]+"','"+options[3]+"','"+options[4]+"','"+options[5]+"','"+options[6]+"','"+options[7]+"','"+options[8]+"','"+options[9]+"','"+options[10]+"','"+options[11]+"','"+options[12]+"','"+options[13]+"','"+options[14]+"','"+options[15]+"','"+options[16]+"','"+options[17]+"','"+options[18]+"','"+options[19]+"','"+options[20]+"','"+options[21]+"','"+options[22]+"','"+options[23]+"','"+options[24]+"','"+options[25]+"','"+options[26]+"','"+options[27]+"','"+options[28]+"','"+options[29]+"','"+options[30]+"','"+options[31]+"','"+options[32]+"','"+options[33]+"','"+options[34]+"','"+options[35]+"','"+options[36]+"')")
 
 insert2 = ("INSERT INTO ScoreByCategory "
-               "(tr,milestones,awards,greeneries,cities,ev,habitats,mines,roads,pathfinders,cards,total, gameNumber)"
-               "VALUES (" + ScoreByCategory[0]+","+ScoreByCategory[1]+","+ScoreByCategory[2]+","+ScoreByCategory[3]+","+ScoreByCategory[4]+","+ScoreByCategory[5]+","+ScoreByCategory[6]+","+ScoreByCategory[7]+","+ScoreByCategory[8]+","+ScoreByCategory[9]+","+ScoreByCategory[10]+","+ScoreByCategory[11]+","+gameNumber+")")
+               "(tr,milestones,awards,greeneries,cities,ev,habitats,mines,roads,pathfinders,cards,total)"
+               "VALUES (" + ScoreByCategory[0]+","+ScoreByCategory[1]+","+ScoreByCategory[2]+","+ScoreByCategory[3]+","+ScoreByCategory[4]+","+ScoreByCategory[5]+","+ScoreByCategory[6]+","+ScoreByCategory[7]+","+ScoreByCategory[8]+","+ScoreByCategory[9]+","+ScoreByCategory[10]+","+ScoreByCategory[11]+")")
 
-insert3= ("INSERT INTO CardsPlayed ")
 
-columns=""
-for i in range(len(ScoreByGeneration)):
-    columns=columns+("gen" + str(i+1)+",")
-columns=columns+"gameNumber"
+# because the number of generations isn't constant this needs to be a loop so that it can deal with different gamelengths 
 
-values=""
-for i in range(len(ScoreByGeneration)):
-    values=values+(ScoreByGeneration[i]+",")
-values=values+gameNumber
+columns="gen1"
+for i in range(len(ScoreByGeneration)-1):
+    columns=columns+(","+"gen" + str(i+2))
+columns=columns
+
+values=ScoreByGeneration[0]
+for i in range(len(ScoreByGeneration)-1):
+    values=values+","+(ScoreByGeneration[i+1])
+
 
 insert3 = ("INSERT INTO ScoreByGeneration"
         "("+columns+")"
         "VALUES ("+values+")")
 
-insert4 = 'INSERT INTO CardsPlayed (cards, gameNumber) VALUES ("' + CardsPlayed + '",' + gameNumber + ')'
+print(insert3)
+insert4 = 'INSERT INTO CardsPlayed (cards) VALUES ("' + CardsPlayed + '")'
 
 
 
-#print("INSERT INTO CardsPlayed (cards, gameNumber) VALUES ('foobar|fdfd',8)")
+
+
+
+
+
+
+
 #Excecuting the command, commiting it to the dataubase and then closing the connection 
 
 cursor.execute(insert1)
@@ -131,11 +134,7 @@ cursor.execute(insert2)
 cursor.execute(insert3)
 cursor.execute(insert4)
 
-
-
-
 cnx.commit()
-
 cursor.close()
 cnx.close()
                 
