@@ -110,12 +110,13 @@ tableDescription4 = (
     ") ENGINE=InnoDB")
 
 tableDescription5 = (
-    "CREATE TABLE `metaData`"
+    "CREATE TABLE `metaData` ("
     " id MEDIUMINT NOT NULL AUTO_INCREMENT,"
     " `rawData` MEDIUMTEXT,"
     " `playerName` VARCHAR(100),"
-    " `won` BOOL,"
-    " `solo` BOOL,"
+    " `won` TINYINT,"
+    " `solo` TINYINT,"
+    " `generation` SMALLINT,"
     " `insertTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP , "
     "  `gameNumber` SMALLINT, "
     " PRIMARY KEY (id) "
@@ -126,6 +127,7 @@ cursor.execute(tableDescription)
 cursor.execute(tableDescription2)
 cursor.execute(tableDescription3)
 cursor.execute(tableDescription4)
+cursor.execute(tableDescription5)
 
 cursor.close()
 cnx.close()
