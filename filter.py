@@ -4,17 +4,19 @@ import re
 
 reads = open("formattedData","r")
 h = reads.read()
+#changing all " in h to " so that it won't cause errors when being inserted 
+h=h.replace('"',"'")
 
 
 #Input is the string and the location (a list with two num elements beginning and end) this is to remove all the spaces newlines etc... that are in the raw data file
 
 def stripSplit(string,location):
-    s=(h[location[0]:location[1]]).replace(" ","").replace("\n","").replace('"',"").split(",")
+    s=(h[location[0]:location[1]]).replace("'","").replace("\n","").replace("'","").split(",")
     return(s)
 
 #Getting options
 
-l=[h.index('"gameOptions": {')+23,h.index('"underworldExpansion": false')+28]
+l=[h.index("'gameOptions': {")+23,h.index("'underworldExpansion': false")+28]
 options=stripSplit(h,l)
 
 #formatting options 
@@ -31,22 +33,22 @@ l=[h.index("victoryPointsByGeneration")+30,h.index("corruption")-13]
 ScoreByGeneration=stripSplit(h,l)
 
 #Getting Generation
-f=h.index('"generation":')+13
+f=h.index("'generation':")+13
 generation=re.sub( '[^0-9]','',(h[f:f+64]))
 
 
 #Getting Score by Category
 #note category is in this order: TR, milestones, awards, greeneries, cities, EV, Moonhabs, Moonmines, moonroads, planetary track, VP, total
 
-begin=h.index('"victoryPointsBreakdown"')
-end=h.index('"detailsCards": [')
+begin=h.index("'victoryPointsBreakdown'")
+end=h.index("'detailsCards': [")
 ScoreByCategory=re.sub( '[^0-9,,]','',(h[begin:end])).split(',')
 del(ScoreByCategory[12])
 
 #Getting all cards played
 
 begin=h.index('tableau')
-end=h.index('"selfReplicatingRobotsCards": [],')
+end=h.index("'selfReplicatingRobotsCards': [],")
 
 x=h[begin:end]
 x=x.replace(" ",'').replace("{",'').replace(",",'').replace('"','').split("\n")
@@ -84,6 +86,7 @@ except:
 else:
     gameNumber=str(int(re.sub( '[^0-9]','',(b)))+1)
 
+    
 cursor.close()
 cursor = cnx.cursor()
 
@@ -115,13 +118,15 @@ insert3 = ("INSERT INTO ScoreByGeneration"
         "("+columns+")"
         "VALUES ("+values+")")
 
-print(insert3)
+
 insert4 = 'INSERT INTO CardsPlayed (cards) VALUES ("' + CardsPlayed + '")'
 
+#note: won, bar and solo are set here because I currently havce not built the method for extracting them 
 
-
-
-
+name="bar"
+won="1"
+solo="1"
+insert5= 'INSERT INTO metaData(rawData,playerName,won,solo,generation,gameNumber) Values ("'+h+'","'+name+'",'+won+","+solo+","+str(generation)+","+str(gameNumber)+')'
 
 
 
@@ -133,6 +138,7 @@ cursor.execute(insert1)
 cursor.execute(insert2)
 cursor.execute(insert3)
 cursor.execute(insert4)
+cursor.execute(insert5)
 
 cnx.commit()
 cursor.close()
