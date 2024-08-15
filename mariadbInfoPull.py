@@ -10,9 +10,9 @@ import sys
 
 
 #opening connection
-cnx = mysql.connector.connect(user='python', password='pythonPassword',
+cnx = mysql.connector.connect(user='pythonRead', password='Ehaid4Zah5vootheeCh3euh1thie4A',
                               host='127.0.0.1',
-                              database='testF')
+                              database='tfm')
 cursor = cnx.cursor()
 
 #Creating scatter plot which compares two columns, this will only work if both of the collumns only contain ints
