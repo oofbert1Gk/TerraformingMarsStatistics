@@ -35,10 +35,10 @@ def table():
 
 
 def pageSelect():
-    pages=[('Insert',"/insert"),("Game Statistics","\GStats"),("Card Statistics","/CStats"),("Help&Info","/info")]
-    logo='mars.jpg'
-    #ftlinks = [A(k, href=v, cls='nav-link px-2 text-muted')]
-    return(Container(Navbar('nav', 'selidx', items=pages, cls='navbar-light bg-secondary rounded-lg',image='file:///home/ima/projectDTCterra/Mars_-_8k_Render_(32907950425).jpg', hdr_href="http://0.0.0.0:5001/", placement=PlacementT.Default, expand=SizeT.Md, toggle_left=False)))
+    pages = [('Insert', "/insert"), ("Game Statistics", "/GStats"), ("Card Statistics", "/CStats"), ("Help&Info", "/info")]
+    return Container(Navbar('nav', 'selidx', items=pages, cls='navbar-light bg-secondary rounded-lg',
+                            image=Img(src='/assets/logo.jpg'), hdr_href="http://0.0.0.0:5001/",
+                            placement=PlacementT.Default, expand=SizeT.Md, toggle_left=False))  
 
 def Sections(h2s, texts):
     colors = 'yellow', 'pink', 'teal', 'blue'
