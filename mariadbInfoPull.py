@@ -36,7 +36,7 @@ def getData(name):
 
 def scatter2columns():
     x=getData("x")
-    y=getData("y")
+    y=getData("y")
 
     plt.xlabel("points from " + x[1])  #adding labels 
     plt.ylabel("points from" + y[1])
