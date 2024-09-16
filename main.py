@@ -29,15 +29,60 @@ import subprocess #running shell commands
 import io #this and the below are for making matplotlib work with fasthtml by converting the graph into a base64 image =
 import base64
 
-css = Style(':root { --pico-font-size: 100%; --pico-font-family: Pacifico;}','table tr td {\r\n  border-right: 1px solid blue;\r\n  color: black\r\n}\r\n\r\ntable tr td:last-of-type {\r\n  border: none;\r\n}')
-app = FastHTML(hdrs=(picolink, css), static_dir='./static')
+
+css = Style('html, body {background-color: #ca6e3d}',
+            'table tr td {\r\n  border: 1px solid black;\r\n  color: black\r\n}\r\n\r\ntable tr td:last-of-type {\r\n  border: 1px solid black;\r\n}',)
+app = FastHTML(hdrs=(picolink,css), static_dir='./static')
 client=TestClient(app)
 
 def pageSelect():
-    pages = [('Insert', "/"), ("Game Statistics Tables", "/GStatsT"), ("Card Statistics", "/CStats"), ("Help&Info", "/info"), ("Game Statistics Graphs", "/GStatsG")]
-    return Container(Navbar('nav', 'selidx', items=pages, cls='navbar-light bg-secondary rounded-lg',
-                            image='logo.svg', hdr_href="http://0.0.0.0:5001/",
-                            placement=PlacementT.Default, expand=SizeT.Md, toggle_left=False))  
+    pages = (
+        )
+    
+    navbar_css = """
+    .navbar {
+        background-color: #ca6e3d;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }   
+    .navbar a {
+        float: left;
+        color: #000000;
+        text-align: center;
+        padding: 14px 30px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+    .navbar a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+    
+    """
+
+    n = Div(
+        A('Insert', href="/"),
+        A("Game Statistics Tables", href="/GStatsT"),
+        A("Game Statistics Graphs", href="/GStatsG"),  
+        A("Help&Info", href="/info"),
+        cls="navbar"
+    )
+
+    return (
+        Head(
+            Title("FastHTML Navbar"),
+            Style(navbar_css)
+    ),
+    Body(
+        n,
+        # Add other content here
+    )
+)
+
+                        
+                                
 
 def Table(cmd):
     #opening connection
@@ -86,7 +131,7 @@ def scatter2columns(xName, xData, yName, yData,labels):
     plt.axhline(0,color='black') 
     plt.axvline(0,color='black') 
         
-    lim=max(max(xData),max(yData))
+    lim=max(max(xData),max(yData))+10
     m=min([min(xData),min(yData)])
     print(m)
     if m>(-10):
@@ -130,10 +175,19 @@ def dataFetch(table,column):
     
 @app.get("/")
 def home():
-    return Main(pageSelect(),P("Insert Link:"),
-                Form(Input(type="text", name="data"),
-                     Button("Submit"),
-                     action="/Insert", method="post"))
+    return Main(
+        pageSelect(),
+        P("Insert Link:", style="font-size: 1.2em;"),
+        Form(
+            Div(
+                Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px;"),
+                Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
+                style="display: flex; align-items: stretch;"
+            ),
+            action="/Insert",
+            method="post"
+        )
+    )
 
 @app.post("/Insert")
 def add_message(data:str):
@@ -145,9 +199,10 @@ tableView=()
       
 @app.get("/GStatsT")
 def page2():
-    return Main(pageSelect(),P("Enter mysql query:"),
-                Form(Input(type="text", name="data"),
-                     Button("Submit"),
+    return Main(pageSelect(),P("Enter mysql query:", style="font-size: 1.2em;"),
+                Form(Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px;"),
+                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
+                     style="display: flex; align-items: stretch;",
                      action="/Table", method="post"),
                      tableView)
 
@@ -163,9 +218,10 @@ graphView=()
 
 @app.get("/GStatsG")
 def page3():
-    return Main(pageSelect(),P("Enter "+graphsQuestions[len(graphData)]+":"),
-                Form(Input(type="text", name="data"),
-                     Button("Submit"),
+    return Main(pageSelect(),P("Enter "+graphsQuestions[len(graphData)]+":", style="font-size: 1.2em;"),
+                Form(Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px;"),
+                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
+                     style="display: flex; align-items: stretch;",
                      action="/Graph", method="post"),
                      graphView)
 
@@ -179,7 +235,10 @@ def processGraphData(data:str):
         graphData[1]=dataFetch(graphData[0],graphData[1])
         graphData[3]=dataFetch(graphData[2],graphData[3])
 
-        graphView=Img(src=scatter2columns(graphData[0],graphData[1],graphData[2],graphData[3],labels), alt="Scatter")+graphView,
+        graphView=Img(src=scatter2columns(graphData[0],graphData[1],graphData[2],graphData[3],labels), 
+                      alt="Scatter", 
+                      style="width: 80%; height: 80%;",
+                      title=f"Value: {graphData[1]} and {graphData[3]}")+graphView,
         graphData=[]
         
     return page3()
