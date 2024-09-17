@@ -1,39 +1,36 @@
 #TODO:
 #-Seperate page for each connection
 
-#importing all potential dependices for fasthtml
-from IPython import display
-from enum import Enum
-from pprint import pprint
+#fasthtml
 from fasthtml.common import *
 from fasthtml.common import Table as TB 
 from fastcore.test import *
-from starlette.testclient import TestClient
-from starlette.requests import Headers
-from starlette.datastructures import UploadFile
-from fastapi.staticfiles import StaticFiles
 
-from fh_bootstrap import *
-from itertools import chain
-from markdown import markdown
+from starlette.responses import RedirectResponse #redirects
+from fastapi.staticfiles import StaticFiles #static files
+from urllib.parse import urlparse #url parsing
+from fastapi import Request #requests
+from fh_bootstrap import * #for bootstrap for ft 
 
 #importing all dependecies for the back end
-from PIL import Image
-import time
-import numpy as np #requirement for matplotlib
-import random 
-import matplotlib.pyplot as plt #plotting
-import mysql.connector #database
-import tabulate #table formatting
-import sys #system specific parameters and functions
-import subprocess #running shell commands
-import io #this and the below are for making matplotlib work with fasthtml by converting the graph into a base64 image =
-from io import BytesIO
+import numpy as np #matplotlib requirement
+import matplotlib.pyplot as plt #graphs and tables
+import mysql.connector #database acess
+import subprocess #running scripts
+import io #this and below are for tpye conversion
 import base64
 import csv #writing csv file 
 import pandas as pd #for the table to image function
 import uuid #for individual sessions for each connection
+from dotenv import load_dotenv #secure variables
 
+load_dotenv()
+
+dbUser = os.getenv('DB_USER')
+dbPass = os.getenv('DB_PASSWORD')
+dbHost= os.getenv('DB_HOST')
+dbDatabase = os.getenv('DB_DATABASE')
+print(dbUser,dbPass,dbHost,dbDatabase)
 css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: 100% auto; background-position: center top; background-repeat: repeat-y; height: 100%; margin: 0; padding: 0;}',
             '''
             .table-container {
@@ -81,7 +78,18 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
             ''')
 app = FastHTML(hdrs=(picolink,css), static_dir='./static')
 app.mount("/static", StaticFiles(directory="static"), name="static")
-client=TestClient(app)
+
+
+def handleError(request: Request, e: str):
+    sessionId = getOrCreateSessionId(request)
+    referer = request.headers.get('referer')
+    if not referer:
+        referer = "/"
+    
+    
+    path=urlparse(referer).path
+    redirectUrl=f"{path}?session_id={sessionId}&error={e}"
+    return RedirectResponse(redirectUrl, status_code=303)
 
 def getOrCreateSessionId(request: Request):
     if 'session_id' in request.query_params:
@@ -136,7 +144,7 @@ def htmlTableToCSV(hTable):
 
 def Table(cmd):
     #opening connection
-    cnx = mysql.connector.connect(user='pythonRead', password='Ehaid4Zah5vootheeCh3euh1thie4A',host='127.0.0.1',database='tfm')
+    cnx = mysql.connector.connect(user=dbUser, password=dbPass, host=dbHost, database=dbDatabase)
     cursor = cnx.cursor()
     
     #getting information from the database
@@ -217,9 +225,9 @@ def scatter2columns(xData, yData,labels):
     
 
 def dataFetch(table,column):
-    ##print(table,column)
+    
     #opening connection
-    cnx = mysql.connector.connect(user='pythonRead', password='Ehaid4Zah5vootheeCh3euh1thie4A',host='127.0.0.1',database='tfm')
+    cnx = mysql.connector.connect(user=dbUser, password=dbPass, host=dbHost, database=dbDatabase)
     cursor = cnx.cursor()
 
     #getting data from the database
@@ -241,8 +249,10 @@ def dataFetch(table,column):
 @app.get("/")
 async def home(request: Request):
     sessionId=getOrCreateSessionId(request)
+    errorMessage = request.query_params.get('error')
     return Main(
         pageSelect(sessionId),
+        P(errorMessage, style="color: red;") if errorMessage else None,
         Form(Div(
                 Div(Input(type="text", name="data",placeholder="Enter game link:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
@@ -261,13 +271,15 @@ def addTable(data:str, request: Request):
         subprocess.run(["bash","getter.sh",data], cwd="./static")
         subprocess.run(["python3.12","filter.py"], cwd="./static")
     except subprocess.CalledProcessError as e:
-        raise HTTPException(status_code=500, detail=f"Error in subprocess: {e}")
+        return handleError(request, f"Error in subprocess: {e}")
+    
     sessionId=getOrCreateSessionId(request)
     return RedirectResponse(url=f"/?session_id={sessionId}", status_code=303)
       
 @app.get("/GStatsT")
 async def page2(request: Request):
     sessionId=getOrCreateSessionId(request)
+    errorMessage = request.query_params.get('error')
 
     #defining input types
     types=[("Show Table","/Table"),("Download as CSV","/DownloadCSV"),("Download as PNG","/DownloadIMG")]
@@ -275,6 +287,8 @@ async def page2(request: Request):
     currentTables=Div(*tableViews.get(sessionId,[]))
 
     return Main(pageSelect(sessionId),P(style="font-size: 2em; color: #8fffdf"),
+                P(errorMessage, style="color: red;") if errorMessage else None,
+                P(style="font-size: 2em; color: #8fffdf"),
                 Form(
                     
                     Input(type="text", placeholder="Enter Mysql Query", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
@@ -297,6 +311,8 @@ graphView={}
 @app.get("/GStatsG")
 async def page3(request: Request):
     sessionId=getOrCreateSessionId(request)
+    errorMessage = request.query_params.get('error')
+
     types=[("Show Graph", "0"),("Download Graph","2")]
 
     if sessionId not in graphData:
@@ -305,6 +321,8 @@ async def page3(request: Request):
         graphView[sessionId]=()
         
     return Main(pageSelect(sessionId),P(style="font-size: 1.2em;"),
+                P(errorMessage, style="color: red;") if errorMessage else None,
+                P(style="font-size: 1.2em;"),
                 Form(
                     Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData[sessionId])]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Select(
@@ -329,7 +347,7 @@ async def handleAction(action:str, data:str, request: Request):
         else:
             return await page2(request) #in case of error
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error in handleAction: {str(e)}")
+        return handleError(request, f"Error in handleAction: {e}")
 
 
 @app.post("/DownloadGraph")
@@ -339,7 +357,7 @@ def downloadIMG(data:str):
     #downloading the table as an image requires a webdriver, which I don't want to add to the project and so I am using matplotlib to make a table and then convert that to png 
     
     #opening connection
-    cnx = mysql.connector.connect(user='pythonRead', password='Ehaid4Zah5vootheeCh3euh1thie4A',host='127.0.0.1',database='tfm')
+    cnx = mysql.connector.connect(user=dbUser, password=dbPass, host=dbHost, database=dbDatabase)
     cursor = cnx.cursor()
     
     #getting information from the database
@@ -380,7 +398,7 @@ def downloadIMG(data:str):
 @app.post("/DownloadCSV")
 def downloadCSV(data:str):
     #opening connection
-    cnx = mysql.connector.connect(user='pythonRead', password='Ehaid4Zah5vootheeCh3euh1thie4A',host='127.0.0.1',database='tfm')
+    cnx = mysql.connector.connect(user=dbUser, password=dbPass, host=dbHost, database=dbDatabase)
     cursor = cnx.cursor()
     
     #getting information from the database
@@ -416,7 +434,7 @@ async def printTable(data:str, request: Request):
     if sessionId not in tableViews:
         tableViews[sessionId]=[]
     tableViews[sessionId].insert(0, Table(data))
-    return await page2(request)  
+    return RedirectResponse(url=f"/GStatsT?session_id={sessionId}", status_code=303)
 
 @app.post("/Graph")
 async def processGraphData(action:str, data:str, request: Request):
@@ -441,9 +459,10 @@ async def processGraphData(action:str, data:str, request: Request):
                 title=f"Value: {graphData[sessionId][1]} and {graphData[sessionId][3]}"
                 )+graphView[sessionId]
             graphData[sessionId]=[]
-        return await page3(request)
+        return RedirectResponse(url=f"/GStatsG?session_id={sessionId}", status_code=303)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error in processGraphData: {str(e)}")
+        graphData[sessionId]=[]
+        return handleError(request, f"Error in processGraphData: {e}")
 
 serve()
 
