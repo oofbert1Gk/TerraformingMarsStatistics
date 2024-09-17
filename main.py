@@ -1,9 +1,5 @@
 #TODO:
 #-Seperate page for each connection
-#-Settings 
-#-make input divs align to middle of page 
-#-find what the herokuapp does if there is a ' in the name 
-#-check if generation selector is working, may be broken 
 
 #importing all potential dependices for fasthtml
 from IPython import display
@@ -37,8 +33,7 @@ import base64
 import csv #writing csv file 
 from html2image import Html2Image 
 import pandas as pd #for the table to image function
-
-
+import secrets #for the secret key
 
 css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100%; margin: 0; padding: 0;}',
             '''
@@ -86,6 +81,11 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
 app = FastHTML(hdrs=(picolink,css), static_dir='./static')
 app.mount("/static", StaticFiles(directory="static"), name="static")
 client=TestClient(app)
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is not set")
+app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY)
 
 def backgroundImageAttribution():
  return(Div(P("Background Image: Valles Marineris huge by NASA / JPL-Caltech / USGS from https://photojournal.jpl.nasa.gov/catalog/PIA00422", cls="footer")))
@@ -163,15 +163,18 @@ def Table(cmd):
     cnx.close()
 
     #returning table
-    return(Div(TB(table), cls="table-container"))
+    return(Div(TB(table), style="display: flex; justify-content: center; width: 100%; padding: 20px;", cls="table-container"))
 
 def scatter2columns(xName, xData, yName, yData,labels):
 
-    plt.xlabel(labels[0])  #adding labels 
+    
+    #creating figure
+    plt.figure(figsize=(8,8))
+
+    #x and y labels
+    plt.xlabel(labels[0]) 
     plt.ylabel(labels[1])
 
-    #defining aspect ratio
-    plt.figure(figsize=(8,8))
 
     #calculating the trendline equation and converting it to right form 
     b=np.polyfit(xData, yData, 1)
@@ -179,13 +182,6 @@ def scatter2columns(xName, xData, yName, yData,labels):
     
     #defining graphs 
     plt.scatter(xData, yData)
-    plt.plot(xData, p(xData), color='red') #trendline
-
-    #modifying axis(and adding axis lines)
-    plt.axhline(0,color='black') 
-    plt.axvline(0,color='black') 
-    
-    plt.tight_layout()
 
     #defining limits
     lim=max(max(xData),max(yData))+10
@@ -198,6 +194,17 @@ def scatter2columns(xName, xData, yName, yData,labels):
         plt.ylim(m,lim)
     ax = plt.gca()
     ax.set_aspect('equal', adjustable='box')
+
+    # extending trendline indefinitely 
+    xMin, xMax = plt.xlim()
+    xExtended= np.linspace(xMin,xMax,10000)
+    plt.plot(xExtended, p(xExtended), color='red') #trendline
+
+    #modifying axis(and adding axis lines)
+    plt.axhline(0,color='black') 
+    plt.axvline(0,color='black') 
+    
+    plt.tight_layout()
 
     #converting to base64
     buf=io.BytesIO()
@@ -234,11 +241,10 @@ def dataFetch(table,column):
 def home():
     return Main(
         pageSelect(),
-        Form(
-            Div(
-                Input(type="text", name="data",placeholder="Enter game link:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
-                Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
-                style="display: flex; align-items: middle;"
+        Form(Div(
+                Div(Input(type="text", name="data",placeholder="Enter game link:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
+                    Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
+                    style="display: flex; align-items: middle;"),
             ),
             action="/Insert",
             method="post"
