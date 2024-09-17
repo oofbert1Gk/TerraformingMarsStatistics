@@ -70,13 +70,12 @@ else:
     won="0"
         
 #finding name 
-l=h[h.index("megaCreditProduction"):h.index("needsToResearch")]
+l=h[h.index("megaCreditProduction"):h.index("needsToResearch")-1]
 l=l.replace("'","",3)
-
+print(l)
 begin=l.index("'")+1
-end=l.index("'",begin)
+end=l.rindex("'")
 name=l[begin:end]
-
 
 #logging in to the mariadb database, this is not the permanent account I will be logging in with, if I actually host this then I will change this 
 cnx = mysql.connector.connect(user='python', password='pythonPassword',
