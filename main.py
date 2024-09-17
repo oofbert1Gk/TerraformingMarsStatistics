@@ -31,15 +31,16 @@ import io #this and the below are for making matplotlib work with fasthtml by co
 from io import BytesIO
 import base64
 import csv #writing csv file 
-from html2image import Html2Image 
 import pandas as pd #for the table to image function
-import secrets #for the secret key
+import uuid #for individual sessions for each connection
 
-css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100%; margin: 0; padding: 0;}',
+css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: 100% auto; background-position: center top; background-repeat: repeat-y; height: 100%; margin: 0; padding: 0;}',
             '''
             .table-container {
                 width: 100%;
                 overflow-x: auto;
+                padding: 20px;
+                box-sizing: border-box;
             }
             table {
                 table-layout: auto;
@@ -82,18 +83,18 @@ app = FastHTML(hdrs=(picolink,css), static_dir='./static')
 app.mount("/static", StaticFiles(directory="static"), name="static")
 client=TestClient(app)
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
-if not SECRET_KEY:
-    raise ValueError("SECRET_KEY is not set")
-app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY)
+def getOrCreateSessionId(request: Request):
+    if 'session_id' in request.query_params:
+        return request.query_params['session_id']
+    elif 'session_id' not in request.session:
+        request.session['session_id'] = str(uuid.uuid4())
+    return request.session['session_id']
 
 def backgroundImageAttribution():
  return(Div(P("Background Image: Valles Marineris huge by NASA / JPL-Caltech / USGS from https://photojournal.jpl.nasa.gov/catalog/PIA00422", cls="footer")))
 
-def pageSelect():
-    pages = (
-        )
-    
+def pageSelect(session_id):
+
     navbar_css = """
     .navbar {
 
@@ -119,10 +120,10 @@ def pageSelect():
     """
 
     n = Div(
-        A('Insert', href="/"),
-        A("Game Statistics Tables", href="/GStatsT"),
-        A("Game Statistics Graphs", href="/GStatsG"),  
-        A("Help & Info", href="/info"),
+        A('Insert', href=f"/?session_id={session_id}"),
+        A("Game Statistics Tables", href=f"/GStatsT?session_id={session_id}"),
+        A("Game Statistics Graphs", href=f"/GStatsG?session_id={session_id}"),  
+        A("Help & Info", href=f"/info?session_id={session_id}"),
         cls="navbar"
     )
 
@@ -163,10 +164,10 @@ def Table(cmd):
     cnx.close()
 
     #returning table
-    return(Div(TB(table), style="display: flex; justify-content: center; width: 100%; padding: 20px;", cls="table-container"))
+    return(Div(TB(table), cls="table-container"))
 
-def scatter2columns(xName, xData, yName, yData,labels):
-
+def scatter2columns(xData, yData,labels):
+    print(xData,yData,labels)
     
     #creating figure
     plt.figure(figsize=(8,8))
@@ -238,9 +239,10 @@ def dataFetch(table,column):
 
 
 @app.get("/")
-def home():
+async def home(request: Request):
+    sessionId=getOrCreateSessionId(request)
     return Main(
-        pageSelect(),
+        pageSelect(sessionId),
         Form(Div(
                 Div(Input(type="text", name="data",placeholder="Enter game link:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
@@ -254,21 +256,23 @@ def home():
     )
 
 @app.post("/Insert")
-def addTable(data:str):
+def addTable(data:str, request: Request):
     subprocess.run(["bash","getter.sh",data], cwd="./static")
     subprocess.run(["python3.12","filter.py"], cwd="./static")
 
-    return home()
-
-tableView=()
+    sessionId=getOrCreateSessionId(request)
+    return RedirectResponse(url=f"/?session_id={sessionId}", status_code=303)
       
 @app.get("/GStatsT")
-def page2():
+async def page2(request: Request):
+    sessionId=getOrCreateSessionId(request)
 
     #defining input types
     types=[("Show Table","/Table"),("Download as CSV","/DownloadCSV"),("Download as PNG","/DownloadIMG")]
 
-    return Main(pageSelect(),P(style="font-size: 2em; color: #8fffdf"),
+    currentTables=Div(*tableViews.get(sessionId,[]))
+
+    return Main(pageSelect(sessionId),P(style="font-size: 2em; color: #8fffdf"),
                 Form(
                     
                     Input(type="text", placeholder="Enter Mysql Query", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
@@ -280,20 +284,27 @@ def page2():
                     style="display: flex; align-items: stretch;",
                     
                     action="/HandleAction", method="post"),
-                    tableView,
+                    currentTables,
                     backgroundImageAttribution())
 
 graphsQuestions=["Table for X","Column for X","Table for Y","Column for Y"]
-graphData=[]
-graphView=()
+tableViews={}
+graphData={}
+graphView={}
 
 @app.get("/GStatsG")
-def page3():
+async def page3(request: Request):
+    sessionId=getOrCreateSessionId(request)
     types=[("Show Graph", "0"),("Download Graph","2")]
-    return Main(pageSelect(),P(style="font-size: 1.2em;"),
+
+    if sessionId not in graphData:
+        graphData[sessionId]=[]
+    if sessionId not in graphView:
+        graphView[sessionId]=()
+        
+    return Main(pageSelect(sessionId),P(style="font-size: 1.2em;"),
                 Form(
-                    
-                    Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData)]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
+                    Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData[sessionId])]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Select(
                         *[Option(label, value=query) for label, query in types],
                         name="action",
@@ -301,19 +312,19 @@ def page3():
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
                     style="display: flex; align-items: stretch;",
                     action="/Graph", method="post"),
-                    graphView,
+                    graphView[sessionId],
                     backgroundImageAttribution())
 
 @app.post("/HandleAction")
-def handleAction(action:str, data:str):
+async def handleAction(action:str, data:str, request: Request):
     if action=="/Table":
-        return addTable(data)
+        return await printTable(data, request)
     elif action=="/DownloadCSV":
         return downloadCSV(data)
     elif action=="/DownloadIMG":
         return downloadIMG(data)
     else:
-        return page2() #in case of error
+        return await page2(request) #in case of error
 
 @app.post("/DownloadGraph")
 
@@ -394,29 +405,37 @@ def downloadCSV(data:str):
     )
 
 @app.post("/Table")
-def addTable(data:str):
-    global tableView
-    tableView=(Table(data),)+tableView
-    return page2()  
+async def printTable(data:str, request: Request):
+    sessionId=getOrCreateSessionId(request)
+    if sessionId not in tableViews:
+        tableViews[sessionId]=[]
+    tableViews[sessionId].insert(0, Table(data))
+    return await page2(request)  
 
 @app.post("/Graph")
-def processGraphData(action:str, data:str):
-    print(action)
-    global graphData
-    global graphView
-    graphData.append(data)
-    if len(graphData)==4:
-        labels=[graphData[1],graphData[3]]
-        graphData[1]=dataFetch(graphData[0],graphData[1])
-        graphData[3]=dataFetch(graphData[2],graphData[3])
+async def processGraphData(action:str, data:str, request: Request):
+    sessionId=getOrCreateSessionId(request)
+    
+    if sessionId not in graphData:
+        graphData[sessionId]=[]
+    if sessionId not in graphView:
+        graphView[sessionId]=()
 
-        graphView=Img(src=scatter2columns(graphData[0],graphData[1],graphData[2],graphData[3],labels), 
-                      alt="Scatter", 
-                      style="width: 100%; max-height: 80vh; object-fit: contain;",
-                      title=f"Value: {graphData[1]} and {graphData[3]}")+graphView,
-        graphData=[]
+    graphData[sessionId].append(data)
+    if len(graphData[sessionId])==4:
+        labels=[graphData[sessionId][1],graphData[sessionId][3]]
+        xData=dataFetch(graphData[sessionId][0],graphData[sessionId][1])
+        yData=dataFetch(graphData[sessionId][2],graphData[sessionId][3])
+        print(graphView[sessionId])
+        graphView[sessionId]=Img(
+            src=scatter2columns(xData,yData,labels), 
+            alt="Scatter", 
+            style="width: 100%; max-height: 80vh; object-fit: contain;",
+            title=f"Value: {graphData[sessionId][1]} and {graphData[sessionId][3]}"
+            )+graphView[sessionId]
+        graphData[sessionId]=[]
         
-    return page3()
+    return await page3(request)
 
 serve()
 
