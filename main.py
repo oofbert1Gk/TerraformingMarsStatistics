@@ -1,7 +1,9 @@
 #TODO:
-#-Add attribution for mars image
 #-Seperate page for each connection
 #-Settings 
+#-make input divs align to middle of page 
+#-find what the herokuapp does if there is a ' in the name 
+#-check if generation selector is working, may be broken 
 
 #importing all potential dependices for fasthtml
 from IPython import display
@@ -37,6 +39,7 @@ from html2image import Html2Image
 import pandas as pd #for the table to image function
 
 
+
 css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100%; margin: 0; padding: 0;}',
             '''
             .table-container {
@@ -49,6 +52,8 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
                 height: auto !important;
                 min-width: 100%;
                 background-color: rgba(255, 255, 255, 0.8);
+                
+            
             }
             table tr td {
                 border: 1px solid black;
@@ -66,11 +71,24 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
                 color: white;
                 text-shadow: 1px 1px 1px black;
             }
-
+            .footer {
+                font-size: 0.75em;
+                position: fixed;
+                bottom: 10px;
+                white-space: nowrap;
+                width: 100%;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 10px;
+                text-align: center;
+            }
             ''')
 app = FastHTML(hdrs=(picolink,css), static_dir='./static')
 app.mount("/static", StaticFiles(directory="static"), name="static")
 client=TestClient(app)
+
+def backgroundImageAttribution():
+ return(Div(P("Background Image: Valles Marineris huge by NASA / JPL-Caltech / USGS from https://photojournal.jpl.nasa.gov/catalog/PIA00422", cls="footer")))
 
 def pageSelect():
     pages = (
@@ -91,10 +109,11 @@ def pageSelect():
         padding: 14px 30px;
         text-decoration: none;
         font-size: 25px;
+        border-radius: 10px !important;
     }
     .navbar a:hover {
         background-color: #3aa69f;
-        color: black;
+        color: #333333 !important;
     }
     
     """
@@ -150,6 +169,10 @@ def scatter2columns(xName, xData, yName, yData,labels):
 
     plt.xlabel(labels[0])  #adding labels 
     plt.ylabel(labels[1])
+
+    #defining aspect ratio
+    plt.figure(figsize=(8,8))
+
     #calculating the trendline equation and converting it to right form 
     b=np.polyfit(xData, yData, 1)
     p=np.poly1d(b)
@@ -159,13 +182,14 @@ def scatter2columns(xName, xData, yName, yData,labels):
     plt.plot(xData, p(xData), color='red') #trendline
 
     #modifying axis(and adding axis lines)
-    
     plt.axhline(0,color='black') 
     plt.axvline(0,color='black') 
-        
+    
+    plt.tight_layout()
+
+    #defining limits
     lim=max(max(xData),max(yData))+10
     m=min([min(xData),min(yData)])
-    print(m)
     if m>(-10):
         plt.xlim(-10,lim)
         plt.ylim(-10,lim)
@@ -204,28 +228,30 @@ def dataFetch(table,column):
     cursor.close()
     cnx.close()
     return(value)
-    
+
+
 @app.get("/")
 def home():
     return Main(
-        Img(src="/static/mars.jpg", alt="Mars"),
         pageSelect(),
-        P("Insert Link:", style="font-size: 1.2em;"),
         Form(
             Div(
-                Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
-                Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
-                style="display: flex; align-items: stretch;"
+                Input(type="text", name="data",placeholder="Enter game link:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
+                Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
+                style="display: flex; align-items: middle;"
             ),
             action="/Insert",
             method="post"
-        )
+        ),
+        Table("select id, playerName, won, generation, insertTime from metaData"),
+        backgroundImageAttribution()
     )
 
 @app.post("/Insert")
 def addTable(data:str):
-    print("getting data")
-    subprocess.run(["bash","getter.sh",data])
+    subprocess.run(["bash","getter.sh",data], cwd="./static")
+    subprocess.run(["python3.12","filter.py"], cwd="./static")
+
     return home()
 
 tableView=()
@@ -239,16 +265,17 @@ def page2():
     return Main(pageSelect(),P(style="font-size: 2em; color: #8fffdf"),
                 Form(
                     
-                    Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
+                    Input(type="text", placeholder="Enter Mysql Query", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Select(
                         *[Option(label, value=query) for label, query in types],
                         name="action",
                         style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 200px; padding: 15px 15px;"),
-                    Button("Submit", style="height: 52px; width: 200px; padding: 15px 15px;"),
+                    Button("Submit", style="height: 52px; width: 200px; padding: 15px 15px; border-radius: 10px;"),
                     style="display: flex; align-items: stretch;",
                     
                     action="/HandleAction", method="post"),
-                    tableView)
+                    tableView,
+                    backgroundImageAttribution())
 
 graphsQuestions=["Table for X","Column for X","Table for Y","Column for Y"]
 graphData=[]
@@ -260,15 +287,16 @@ def page3():
     return Main(pageSelect(),P(style="font-size: 1.2em;"),
                 Form(
                     
-                    Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
+                    Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData)]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Select(
                         *[Option(label, value=query) for label, query in types],
                         name="action",
                         style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 175px; padding: 15px 15px;"),
-                    Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
+                    Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
                     style="display: flex; align-items: stretch;",
                     action="/Graph", method="post"),
-                    graphView)
+                    graphView,
+                    backgroundImageAttribution())
 
 @app.post("/HandleAction")
 def handleAction(action:str, data:str):
@@ -378,7 +406,7 @@ def processGraphData(action:str, data:str):
 
         graphView=Img(src=scatter2columns(graphData[0],graphData[1],graphData[2],graphData[3],labels), 
                       alt="Scatter", 
-                      style="width: 80%; height: 80%;",
+                      style="width: 100%; max-height: 80vh; object-fit: contain;",
                       title=f"Value: {graphData[1]} and {graphData[3]}")+graphView,
         graphData=[]
         
