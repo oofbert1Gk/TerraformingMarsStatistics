@@ -257,9 +257,11 @@ async def home(request: Request):
 
 @app.post("/Insert")
 def addTable(data:str, request: Request):
-    subprocess.run(["bash","getter.sh",data], cwd="./static")
-    subprocess.run(["python3.12","filter.py"], cwd="./static")
-
+    try:
+        subprocess.run(["bash","getter.sh",data], cwd="./static")
+        subprocess.run(["python3.12","filter.py"], cwd="./static")
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(status_code=500, detail=f"Error in subprocess: {e}")
     sessionId=getOrCreateSessionId(request)
     return RedirectResponse(url=f"/?session_id={sessionId}", status_code=303)
       
@@ -317,14 +319,18 @@ async def page3(request: Request):
 
 @app.post("/HandleAction")
 async def handleAction(action:str, data:str, request: Request):
-    if action=="/Table":
-        return await printTable(data, request)
-    elif action=="/DownloadCSV":
-        return downloadCSV(data)
-    elif action=="/DownloadIMG":
-        return downloadIMG(data)
-    else:
-        return await page2(request) #in case of error
+    try:    
+        if action=="/Table":
+            return await printTable(data, request)
+        elif action=="/DownloadCSV":
+            return downloadCSV(data)
+        elif action=="/DownloadIMG":
+            return downloadIMG(data)
+        else:
+            return await page2(request) #in case of error
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error in handleAction: {str(e)}")
+
 
 @app.post("/DownloadGraph")
 
@@ -414,28 +420,30 @@ async def printTable(data:str, request: Request):
 
 @app.post("/Graph")
 async def processGraphData(action:str, data:str, request: Request):
-    sessionId=getOrCreateSessionId(request)
-    
-    if sessionId not in graphData:
-        graphData[sessionId]=[]
-    if sessionId not in graphView:
-        graphView[sessionId]=()
+    try:
+        sessionId=getOrCreateSessionId(request)
 
-    graphData[sessionId].append(data)
-    if len(graphData[sessionId])==4:
-        labels=[graphData[sessionId][1],graphData[sessionId][3]]
-        xData=dataFetch(graphData[sessionId][0],graphData[sessionId][1])
-        yData=dataFetch(graphData[sessionId][2],graphData[sessionId][3])
-        print(graphView[sessionId])
-        graphView[sessionId]=Img(
-            src=scatter2columns(xData,yData,labels), 
-            alt="Scatter", 
-            style="width: 100%; max-height: 80vh; object-fit: contain;",
-            title=f"Value: {graphData[sessionId][1]} and {graphData[sessionId][3]}"
-            )+graphView[sessionId]
-        graphData[sessionId]=[]
-        
-    return await page3(request)
+        if sessionId not in graphData:
+            graphData[sessionId]=[]
+        if sessionId not in graphView:
+            graphView[sessionId]=()
+
+        graphData[sessionId].append(data)
+        if len(graphData[sessionId])==4:
+            labels=[graphData[sessionId][1],graphData[sessionId][3]]
+            xData=dataFetch(graphData[sessionId][0],graphData[sessionId][1])
+            yData=dataFetch(graphData[sessionId][2],graphData[sessionId][3])
+            print(graphView[sessionId])
+            graphView[sessionId]=Img(
+                src=scatter2columns(xData,yData,labels), 
+                alt="Scatter", 
+                style="width: 100%; max-height: 80vh; object-fit: contain;",
+                title=f"Value: {graphData[sessionId][1]} and {graphData[sessionId][3]}"
+                )+graphView[sessionId]
+            graphData[sessionId]=[]
+        return await page3(request)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error in processGraphData: {str(e)}")
 
 serve()
 
