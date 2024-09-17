@@ -1,5 +1,7 @@
 #TODO:
 #-Add attribution for mars image
+#-Seperate page for each connection
+#-Settings 
 
 #importing all potential dependices for fasthtml
 from IPython import display
@@ -35,7 +37,7 @@ from html2image import Html2Image
 import pandas as pd #for the table to image function
 
 
-css = Style('html, body {background-color: #ca6e3d}',
+css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100%; margin: 0; padding: 0;}',
             '''
             .table-container {
                 width: 100%;
@@ -46,6 +48,7 @@ css = Style('html, body {background-color: #ca6e3d}',
                 width: auto !important;
                 height: auto !important;
                 min-width: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
             }
             table tr td {
                 border: 1px solid black;
@@ -53,10 +56,17 @@ css = Style('html, body {background-color: #ca6e3d}',
                 white-space: nowrap;
                 padding: 5px;
                 width: 1px !important;
+                text-shadow: 0px 0px 0px black;
             }
             table tr td:last-of-type {
                 border: 1px solid black;
             }
+
+            body {
+                color: white;
+                text-shadow: 1px 1px 1px black;
+            }
+
             ''')
 app = FastHTML(hdrs=(picolink,css), static_dir='./static')
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -68,7 +78,7 @@ def pageSelect():
     
     navbar_css = """
     .navbar {
-        background-color: #ca6e3d;
+
         overflow: hidden;
         display: flex;
         justify-content: center;
@@ -76,14 +86,14 @@ def pageSelect():
     }   
     .navbar a {
         float: left;
-        color: #000000;
+        color: #ffffff;
         text-align: center;
         padding: 14px 30px;
         text-decoration: none;
-        font-size: 17px;
+        font-size: 25px;
     }
     .navbar a:hover {
-        background-color: #ddd;
+        background-color: #3aa69f;
         color: black;
     }
     
@@ -93,21 +103,16 @@ def pageSelect():
         A('Insert', href="/"),
         A("Game Statistics Tables", href="/GStatsT"),
         A("Game Statistics Graphs", href="/GStatsG"),  
-        A("Help&Info", href="/info"),
+        A("Help & Info", href="/info"),
         cls="navbar"
     )
 
-    return (
-        Head(
-            Title("FastHTML Navbar"),
-            Style(navbar_css)
-    ),Body(n))
+    return (Head(Title("FastHTML Navbar"),Style(navbar_css)),Body(n))
 
 def htmlTableToCSV(hTable):
     r=pd.read_html(hTable)[0]
     csv=r.to_csv(index=False)
     return csv
-
 
 def Table(cmd):
     #opening connection
@@ -145,7 +150,6 @@ def scatter2columns(xName, xData, yName, yData,labels):
 
     plt.xlabel(labels[0])  #adding labels 
     plt.ylabel(labels[1])
-
     #calculating the trendline equation and converting it to right form 
     b=np.polyfit(xData, yData, 1)
     p=np.poly1d(b)
@@ -209,7 +213,7 @@ def home():
         P("Insert Link:", style="font-size: 1.2em;"),
         Form(
             Div(
-                Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px;"),
+                Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                 Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
                 style="display: flex; align-items: stretch;"
             ),
@@ -232,20 +236,39 @@ def page2():
     #defining input types
     types=[("Show Table","/Table"),("Download as CSV","/DownloadCSV"),("Download as PNG","/DownloadIMG")]
 
-    return Main(pageSelect(),P("Select action to be performed:", style="font-size: 1.2em;"),
+    return Main(pageSelect(),P(style="font-size: 2em; color: #8fffdf"),
                 Form(
+                    
+                    Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Select(
                         *[Option(label, value=query) for label, query in types],
                         name="action",
-                        style="flex-grow: 1; margin-right: 10px; height: 52px; width: 200px; padding: 15px 15px;"
-                    ),
-                    Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px;"),
-                     Button("Submit", style="height: 52px; width: 200px; padding: 15px 15px;"),
-                     style="display: flex; align-items: stretch;",
-                     action="/HandleAction", method="post"),
-                     tableView)
+                        style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 200px; padding: 15px 15px;"),
+                    Button("Submit", style="height: 52px; width: 200px; padding: 15px 15px;"),
+                    style="display: flex; align-items: stretch;",
+                    
+                    action="/HandleAction", method="post"),
+                    tableView)
 
+graphsQuestions=["Table for X","Column for X","Table for Y","Column for Y"]
+graphData=[]
+graphView=()
 
+@app.get("/GStatsG")
+def page3():
+    types=[("Show Graph", "0"),("Download Graph","2")]
+    return Main(pageSelect(),P(style="font-size: 1.2em;"),
+                Form(
+                    
+                    Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
+                    Select(
+                        *[Option(label, value=query) for label, query in types],
+                        name="action",
+                        style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 175px; padding: 15px 15px;"),
+                    Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
+                    style="display: flex; align-items: stretch;",
+                    action="/Graph", method="post"),
+                    graphView)
 
 @app.post("/HandleAction")
 def handleAction(action:str, data:str):
@@ -257,6 +280,8 @@ def handleAction(action:str, data:str):
         return downloadIMG(data)
     else:
         return page2() #in case of error
+
+@app.post("/DownloadGraph")
 
 @app.post("/DownloadIMG")
 def downloadIMG(data:str):
@@ -340,21 +365,9 @@ def addTable(data:str):
     tableView=(Table(data),)+tableView
     return page2()  
 
-graphsQuestions=["Table for X","Column for X","Table for Y","Column for Y"]
-graphData=[]
-graphView=()
-
-@app.get("/GStatsG")
-def page3():
-    return Main(pageSelect(),P("Enter "+graphsQuestions[len(graphData)]+":", style="font-size: 1.2em;"),
-                Form(Input(type="text", name="data", style="flex-grow: 1; margin-right: 10px;"),
-                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px;"),
-                     style="display: flex; align-items: stretch;",
-                     action="/Graph", method="post"),
-                     graphView)
-
 @app.post("/Graph")
-def processGraphData(data:str):
+def processGraphData(action:str, data:str):
+    print(action)
     global graphData
     global graphView
     graphData.append(data)
