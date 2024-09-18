@@ -31,7 +31,7 @@ dbUser = os.getenv('DB_USER')
 dbPass = os.getenv('DB_PASSWORD')
 dbHost= os.getenv('DB_HOST')
 dbDatabase = os.getenv('DB_DATABASE')
-print(dbUser,dbPass,dbHost,dbDatabase)
+
 css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: 100% auto; background-position: center top; background-repeat: repeat-y; height: 100%; margin: 0; padding: 0;}',
             '''
             .table-container {
