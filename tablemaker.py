@@ -1,13 +1,18 @@
 #this is what I used to set up the mariadb tables 
 
 from __future__ import print_function
-
 import mysql.connector
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
+dbUser=os.getenv('DB_USER')
+dbPass=os.getenv("DB_PASSWORD")
+dbHost=os.getenv('DB_HOST')
+dbDatabase=os.getenv('DB_DATABASE')
 
 #connecting to the server
-cnx = mysql.connector.connect(user='python', password='pythonPassword',
-                              host='127.0.0.1',
-                              database='tfm')
+cnx = mysql.connector.connect(user=dbUser, password=dbPass, host=dbHost, database=dbDatabase)
 cursor = cnx.cursor()
 
 #defining options table note: they are only temporarily set to varchar so I can make sure that rest actually works the format will be changed later 

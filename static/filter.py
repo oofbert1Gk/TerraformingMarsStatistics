@@ -1,26 +1,30 @@
 from __future__ import print_function
 import mysql.connector
 import re 
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
+dbUser=os.getenv('DB_USER')
+dbPass=os.getenv("DB_PASSWORD")
+dbHost=os.getenv('DB_HOST')
+dbDatabase=os.getenv('DB_DATABASE')
 
 reads = open("formattedData","r")
 h = reads.read()
 #changing all " in h to " so that it won't cause errors when being inserted 
 h=h.replace('"',"'")
 
-
 #Input is the string and the location (a list with two num elements beginning and end) this is to remove all the spaces newlines etc... that are in the raw data file
-
 def stripSplit(string,location):
     s=(h[location[0]:location[1]]).replace("'","").replace("\n","").replace("'","").split(",")
     return(s)
 
 #Getting options
-
 l=[h.index("'gameOptions': {")+23,h.index("'underworldExpansion': false")+28]
 options=stripSplit(h,l)
 
 #formatting options 
-
 for i in range(len(options)):
     begin=options[i].index(":")+1
     end=len(options[i])
@@ -38,15 +42,12 @@ generation=re.sub( '[^0-9]','',(h[f:f+64]))
 
 
 #Getting Score by Category
-#note category is in this order: TR, milestones, awards, greeneries, cities, EV, Moonhabs, Moonmines, moonroads, planetary track, VP, total
-
 begin=h.index("'victoryPointsBreakdown'")
 end=h.index("'detailsCards': [")
 ScoreByCategory=re.sub( '[^0-9,,]','',(h[begin:end])).split(',')
 del(ScoreByCategory[12])
 
 #Getting all cards played
-
 begin=h.index('tableau')
 end=h.index("'selfReplicatingRobotsCards': [],")
 
@@ -59,7 +60,7 @@ for i in range(len(x)):
         a=x[i].replace("name:","")+","
         CardsPlayed+=a
 
-#finding if won 
+#finding if won
 begin=h.index("isSoloModeWin")+16
 end=begin+6
 won=(h[begin:end].replace(",",""))[0:4]
@@ -77,22 +78,15 @@ begin=l.index("'")+1
 end=l.rindex("'")
 name=l[begin:end]
 
-#logging in to the mariadb database, this is not the permanent account I will be logging in with, if I actually host this then I will change this 
-cnx = mysql.connector.connect(user='python', password='pythonPassword',
-                              host='127.0.0.1',
-                              database='tfm')
+#end of data extraction, beggining of data insertion 
 
+cnx = mysql.connector.connect(user=dbUser, password=dbPass, host=dbHost, database=dbDatabase)
 cursor = cnx.cursor(buffered=True)
 
-#defining the query command 
+#getting game number 
 query = ("SELECT gameNumber FROM metaData ORDER BY id desc LIMIT 1")
-
-#excecuting the query 
 cursor.execute(query)
-
-#getting the results and formatting them(we only want the number)
 b=str(cursor.fetchone())
-
 try:
     result=int(re.sub( '[^0-9]','',(b)))
 except:
@@ -104,7 +98,7 @@ else:
 cursor.close()
 cursor = cnx.cursor()
 
-#defining the mariad statement, this looks very messy but I wanted to have a collumn for each setting
+#defining the mariad statements, these are messy but they work 
 #note: I have defined the mariadb table for score by generation to only have a length of 20 therefore if for some reason it is longer than 20 generations the script will not work (metanote: real games will never take 20 generations)
 
 insert1 = ("INSERT INTO options "
@@ -117,7 +111,6 @@ insert2 = ("INSERT INTO ScoreByCategory "
 
 
 # because the number of generations isn't constant this needs to be a loop so that it can deal with different gamelengths 
-
 columns="gen1"
 for i in range(len(ScoreByGeneration)-1):
     columns=columns+(","+"gen" + str(i+2))
@@ -127,21 +120,16 @@ values=ScoreByGeneration[0]
 for i in range(len(ScoreByGeneration)-1):
     values=values+","+(ScoreByGeneration[i+1])
 
-
 insert3 = ("INSERT INTO ScoreByGeneration"
         "("+columns+")"
         "VALUES ("+values+")")
 
-
 insert4 = 'INSERT INTO CardsPlayed (cards) VALUES ("' + CardsPlayed + '")'
 
-#note: won, bar and solo are set here because I currently havce not built the method for extracting them 
-
-
+#note: solo is set here because all games are defined as solo games as I have not build a framerwork for handling multiplayer games(it will work but it will only get data from the the player from which the link was inserted)
 solo="1"
-insert5= 'INSERT INTO metaData(rawData,playerName,won,solo,generation,gameNumber) Values ("'+h+'","'+name+'",'+won+","+solo+","+str(generation)+","+str(gameNumber)+')'
 
-#Excecuting the command, commiting it to the dataubase and then closing the connection 
+insert5= 'INSERT INTO metaData(rawData,playerName,won,solo,generation,gameNumber) Values ("'+h+'","'+name+'",'+won+","+solo+","+str(generation)+","+str(gameNumber)+')'
 
 cursor.execute(insert1)
 cursor.execute(insert2)
