@@ -5,10 +5,11 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-dbUser=os.getenv('DB_USER')
-dbPass=os.getenv("DB_PASSWORD")
-dbHost=os.getenv('DB_HOST')
-dbDatabase=os.getenv('DB_DATABASE')
+dbUser=os.getenv('wDB_USER')
+dbPass=os.getenv("wDB_PASSWORD")
+dbHost=os.getenv('wDB_HOST')
+dbDatabase=os.getenv('wDB_DATABASE')
+
 
 reads = open("formattedData","r")
 h = reads.read()

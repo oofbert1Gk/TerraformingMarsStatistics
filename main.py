@@ -101,7 +101,7 @@ def getOrCreateSessionId(request: Request):
     return request.session['session_id']
 
 def backgroundImageAttribution():
- return(Div(P("Background Image: Valles Marineris huge by NASA / JPL-Caltech / USGS from https://photojournal.jpl.nasa.gov/catalog/PIA00422", cls="footer")))
+ return(Div(P("Background Image: cropped from Valles Marineris huge by NASA / JPL-Caltech / USGS from https://photojournal.jpl.nasa.gov/catalog/PIA00422", cls="footer")))
 
 def pageSelect(session_id):
 
@@ -133,7 +133,7 @@ def pageSelect(session_id):
         A('Insert', href=f"/?session_id={session_id}"),
         A("Game Statistics Tables", href=f"/GStatsT?session_id={session_id}"),
         A("Game Statistics Graphs", href=f"/GStatsG?session_id={session_id}"),  
-        A("Help & Info", href=f"/info?session_id={session_id}"),
+        A("Help & Info", href="/info"),
         cls="navbar"
     )
 
@@ -260,11 +260,12 @@ async def home(request: Request):
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
                     style="display: flex; align-items: middle;"),
             ),
-            style="padding: 20px;",
+            style="padding: 20px 20px 0px 20px;",
             action="/Insert",
             method="post"
         ),
-        Table("select id, playerName, won, generation, insertTime from metaData"),
+        H3("Recent Games:", style="color: white; padding: 0px 0px 0px 20px;"),
+        Table("SELECT id, playerName, won, generation, insertTime FROM metaData ORDER BY id desc LIMIT 10"),
         backgroundImageAttribution()
     )
 
@@ -332,6 +333,52 @@ async def page3(request: Request):
                     method="post"),
                     graphView[sessionId],
                     backgroundImageAttribution())
+paragraphs=[]
+paragraphs.append(("This is a project made for scraping data off your herokuapp terraforming mars games and then analyses the data, it takes a link to the endgame situation and extracts the data and input it into a mariadb database, the graphical interface contaisn this, mysql queries to the database as well as a scatter graph between two columns in the database. All the code for the website can be found in the github page,",A('https://github.com/oofbert1Gk/TerraformingMarsStatistics/'),". This is also where to report bugs or make suggestions."))
+paragraphs.append(("For a perfect representation of the database structure see", A('https://github.com/oofbert1Gk/TerraformingMarsStatistics/blob/main/tablemaker.py'), "which defines it. To find all columns which a table has input into Game Statistics Tables: select * from insert_table_name limit 0 . There are 5 tables:"))
+paragraphs.append("options : this has a column for each setting")
+paragraphs.append("ScoreByCategory : this specifies how much score one has for each category ")
+paragraphs.append("ScoreByGeneration : This has a column for twenty generations(yes, if your game is longer than 20 generations it will cut cause bugs), they are simply named gen{number}, for example gen1 or gen2")
+paragraphs.append("CardsPlayed : this only contains one list, 'cards' which contains every single card played by the player")
+paragraphs.append("metaData : This table contains metadata and some other things, some of it's columns are diusplayed on the homepage, the columns are rawData,playerName,won,solo,generation,insertTime,gameNumber It is important that you will never want to select raw data because it is very big and so may cause problem when displaying.")
+paragraphs.append("Insert: Paste in a link to a finsiehd tfm game then press enter or press the submit button")
+paragraphs.append("Type a mysql query, then select the output format(show, donload data, download image) then press enter or submit. The basic mysql select structure is 'select {columns} from {table}'. For example:")
+paragraphs.append("select gen1 from ScoreByGeneration (selects the generation one column from the ScoreByGeneration Table)")
+paragraphs.append("select gen1, gen2, gen4 from scoreByGeneration (selects the generation 1,2 and 4 columns from the ScoreByGeneration table)")
+paragraphs.append("select * from ScoreByCategory (selects all columsn from the ScoreByCategory Table)")
+paragraphs.append("If you don't understand this or you want more complex queries then there is a number of great mysql select tutorials online")
+paragraphs.append("Choose a table and from that table a column that will be the x axis data then choose a table and then a column that will be the y axis data. This is for seeing the relationship between two columns. For example:")
+paragraphs.append((Li("Input1: ScoreByGeneration"),Li("Input2: cities"),Li("Input3: ScoreByGeneration"),Li("Input4: greeneries")))
+paragraphs.append("This will produce a scatter plot with the the points from cities on the x axis and the points from greeneries on the y axis. The two tables do not have to be the same table and this only work if they are both floats/integers!")
+paragraphs.append("")
+@app.get("/info")
+async def helpAndInfo(request: Request):
+    sessionId=getOrCreateSessionId(request)
+    return (
+        pageSelect(sessionId),
+        Div(
+            H2("Overview"),
+            P(paragraphs[0]),
+            H2("Usage"),
+            H4("Insert"),
+            P(paragraphs[8]),
+            H4("Game Statistics Tabless"),
+            P(paragraphs[9]),
+            Ul(*[Li(text) for text in paragraphs[9:12]]),
+            P(paragraphs[12]),
+            H4("Game Statistics Graphs"),
+            P(paragraphs[13]),
+            Ul(paragraphs[14]),
+            P(paragraphs[15]),
+            H2("List of Tables"),
+            P(paragraphs[1]),
+            Ul(*[Li(text) for text in paragraphs[2:7]]),
+            style="background-color: white !important; text-shadow: 0px 0px 0px black; padding: 75px 150px 100px 150px;"
+            ),
+        backgroundImageAttribution()
+        ),
+        
+
 
 @app.post("/HandleAction")
 async def handleAction(action:str, data:str, request: Request):
