@@ -1,5 +1,6 @@
 #TODO:
-#-Seperate page for each connection
+#-Check filter.py if the update worked 
+#-make the help and information page 
 
 #fasthtml
 from fasthtml.common import *
@@ -313,8 +314,6 @@ async def page3(request: Request):
     sessionId=getOrCreateSessionId(request)
     errorMessage = request.query_params.get('error')
 
-    types=[("Show Graph", "0"),("Download Graph","2")]
-
     if sessionId not in graphData:
         graphData[sessionId]=[]
     if sessionId not in graphView:
@@ -325,13 +324,10 @@ async def page3(request: Request):
                 P(style="font-size: 1.2em;"),
                 Form(
                     Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData[sessionId])]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
-                    Select(
-                        *[Option(label, value=query) for label, query in types],
-                        name="action",
-                        style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 175px; padding: 15px 15px;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
                     style="display: flex; align-items: stretch;",
-                    action="/Graph", method="post"),
+                    action="/Graph", 
+                    method="post"),
                     graphView[sessionId],
                     backgroundImageAttribution())
 
@@ -348,9 +344,6 @@ async def handleAction(action:str, data:str, request: Request):
             return await page2(request) #in case of error
     except Exception as e:
         return handleError(request, f"Error in handleAction: {e}")
-
-
-@app.post("/DownloadGraph")
 
 @app.post("/DownloadIMG")
 def downloadIMG(data:str):
@@ -437,7 +430,7 @@ async def printTable(data:str, request: Request):
     return RedirectResponse(url=f"/GStatsT?session_id={sessionId}", status_code=303)
 
 @app.post("/Graph")
-async def processGraphData(action:str, data:str, request: Request):
+async def processGraphData(data:str, request: Request):
     try:
         sessionId=getOrCreateSessionId(request)
 
