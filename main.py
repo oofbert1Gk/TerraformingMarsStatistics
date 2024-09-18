@@ -1,6 +1,8 @@
 #TODO:
 #-Check filter.py if the update worked 
-#-make the help and information page 
+#-make the help and information page
+#- modify getter to be less vulnerable to attack by making it alway get from terraformingmarshereokuapp (or terraformingamrs community herokuapp ) 
+
 
 #fasthtml
 from fasthtml.common import *
@@ -259,6 +261,7 @@ async def home(request: Request):
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
                     style="display: flex; align-items: middle;"),
             ),
+            style="padding: 20px;",
             action="/Insert",
             method="post"
         ),
@@ -298,9 +301,9 @@ async def page2(request: Request):
                         name="action",
                         style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 200px; padding: 15px 15px;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15px 15px; border-radius: 10px;"),
-                    style="display: flex; align-items: stretch;",
-                    
+                    style="display: flex; align-items: stretch; padding: 20px;",
                     action="/HandleAction", method="post"),
+                    
                     currentTables,
                     backgroundImageAttribution())
 
@@ -325,7 +328,7 @@ async def page3(request: Request):
                 Form(
                     Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData[sessionId])]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
-                    style="display: flex; align-items: stretch;",
+                    style="display: flex; align-items: stretch; padding: 20px;",
                     action="/Graph", 
                     method="post"),
                     graphView[sessionId],
