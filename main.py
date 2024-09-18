@@ -34,7 +34,7 @@ dbPass = os.getenv('DB_PASSWORD')
 dbHost= os.getenv('DB_HOST')
 dbDatabase = os.getenv('DB_DATABASE')
 
-css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: 100% auto; background-position: center top; background-repeat: repeat-y; height: 100%; margin: 0; padding: 0;}',
+css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge.jpg); background-size: cover; background-position: center top; background-repeat: repeat-y; height: 100%; margin: 0; padding: 0;}',
             '''
             .table-container {
                 width: 100%;
@@ -49,7 +49,6 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
                 min-width: 100%;
                 background-color: rgba(255, 255, 255, 0.8);
                 
-            
             }
             table tr td {
                 border: 1px solid black;
