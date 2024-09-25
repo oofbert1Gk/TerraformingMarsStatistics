@@ -1,6 +1,3 @@
-#TODO:
-#- modify getter to be less vulnerable to attack by making it alway get from terraformingmarshereokuapp (or terraformingamrs community herokuapp ) 
-
 #fasthtml
 from fasthtml.common import *
 from fasthtml.common import Table as TB 
@@ -49,7 +46,6 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
                 
             }
             table tr td {
-                border: 1px solid black;
                 color: white;
                 white-space: nowrap;
                 padding: 5px;
@@ -57,9 +53,6 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
                 text-shadow: 1px white;
                 background-color: #fb913dce;
 
-            }
-            table tr td:last-of-type {
-                border: 1px solid black;
             }
 
             body {
@@ -69,7 +62,7 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
             .footer {
                 font-size: 0.75em;
                 position: fixed;
-                bottom: 10px;
+                bottom: -5px;
                 white-space: nowrap;
                 width: 100%;
                 color: white;
@@ -124,7 +117,7 @@ def pageSelect(session_id, classes):
     }
 
     .navbar a.on {
-        background-color: #ffff00cc;
+        background-color: #E7D27C;
         color: #000000;
     }
 
