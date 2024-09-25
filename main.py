@@ -1,8 +1,5 @@
 #TODO:
-#-Check filter.py if the update worked 
-#-make the help and information page
 #- modify getter to be less vulnerable to attack by making it alway get from terraformingmarshereokuapp (or terraformingamrs community herokuapp ) 
-
 
 #fasthtml
 from fasthtml.common import *
@@ -39,24 +36,27 @@ css = Style('html, body {background-image: url(/static/800px-VallesMarinerisHuge
             .table-container {
                 width: 100%;
                 overflow-x: auto;
-                padding: 20px;
+                padding: 20px 100px 0px 100px;
                 box-sizing: border-box;
+                
             }
             table {
                 table-layout: auto;
                 width: auto !important;
                 height: auto !important;
                 min-width: 100%;
-                background-color: rgba(255, 255, 255, 0.8);
+                
                 
             }
             table tr td {
                 border: 1px solid black;
-                color: black;
+                color: white;
                 white-space: nowrap;
                 padding: 5px;
                 width: 1px !important;
-                text-shadow: 0px 0px 0px black;
+                text-shadow: 1px white;
+                background-color: #fb913dce;
+
             }
             table tr td:last-of-type {
                 border: 1px solid black;
@@ -88,7 +88,6 @@ def handleError(request: Request, e: str):
     if not referer:
         referer = "/"
     
-    
     path=urlparse(referer).path
     redirectUrl=f"{path}?session_id={sessionId}&error={e}"
     return RedirectResponse(redirectUrl, status_code=303)
@@ -103,15 +102,16 @@ def getOrCreateSessionId(request: Request):
 def backgroundImageAttribution():
  return(Div(P("Background Image: cropped from Valles Marineris huge by NASA / JPL-Caltech / USGS from https://photojournal.jpl.nasa.gov/catalog/PIA00422", cls="footer")))
 
-def pageSelect(session_id):
+def pageSelect(session_id, classes):
 
     navbar_css = """
     .navbar {
 
         overflow: hidden;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        justify-content: flex-start !important;
+        align-items: left;
+        margin-right: 5%;
     }   
     .navbar a {
         float: left;
@@ -122,6 +122,12 @@ def pageSelect(session_id):
         font-size: 25px;
         border-radius: 10px !important;
     }
+
+    .navbar a.on {
+        background-color: #ffff00cc;
+        color: #000000;
+    }
+
     .navbar a:hover {
         background-color: #3aa69f;
         color: #333333 !important;
@@ -130,10 +136,11 @@ def pageSelect(session_id):
     """
 
     n = Div(
-        A('Insert', href=f"/?session_id={session_id}"),
-        A("Game Statistics Tables", href=f"/GStatsT?session_id={session_id}"),
-        A("Game Statistics Graphs", href=f"/GStatsG?session_id={session_id}"),  
-        A("Help & Info", href="/info"),
+        P("Terraforming Mars Game Scraper", style="font-family: 'Pacifico',cursive; text-align: center; color: white; font-size: 3em; margin: auto; margin-left: 2.5% !important;"),
+        A('Insert', href=f"/?session_id={session_id}", cls=classes[0]),
+        A("Game Statistics Tables", href=f"/GStatsT?session_id={session_id}", cls=classes[1]),
+        A("Game Statistics Graphs", href=f"/GStatsG?session_id={session_id}", cls=classes[2]),  
+        A("Help & Info", href="/info", cls=classes[3]),
         cls="navbar"
     )
 
@@ -177,8 +184,7 @@ def Table(cmd):
     return(Div(TB(table), cls="table-container"))
 
 def scatter2columns(xData, yData,labels):
-    print(xData,yData,labels)
-    
+
     #creating figure
     plt.figure(figsize=(8,8))
 
@@ -236,12 +242,6 @@ def dataFetch(table,column):
     cursor.execute("select " + column + "  from " + table)
     value=cursor.fetchall()
 
-    for i in range(len(value)):       #looping over the columns and converting them from tuple to int 
-        try:
-            value[i]=int(value[i][0])
-        except ValueError:
-            input("collumn must only contain floats")
-
     #closing connection 
     cursor.close()
     cnx.close()
@@ -253,18 +253,21 @@ async def home(request: Request):
     sessionId=getOrCreateSessionId(request)
     errorMessage = request.query_params.get('error')
     return Main(
-        pageSelect(sessionId),
+        #heading is currently commented out, it didn't right but I left it here for reference and because it may be implemnted later 
+        #H1("Insert", style="color: white; font-size: 4em; display: flex; text-shadow: 2px 2px ;justify-content: center; align-items: center; height: 100px; width: 100%;"),
+        pageSelect(sessionId,["on","","",""]),
         P(errorMessage, style="color: red;") if errorMessage else None,
+ 
         Form(Div(
                 Div(Input(type="text", name="data",placeholder="Enter game link:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
-                    style="display: flex; align-items: middle;"),
+                    style="display: flex; align-items: middle; justify-content: center;"),
             ),
             style="padding: 20px 20px 0px 20px;",
             action="/Insert",
             method="post"
         ),
-        H3("Recent Games:", style="color: white; padding: 0px 0px 0px 20px;"),
+        H3("Recent Games", style="color: white; padding: 0px 0px 0px 100px; font-size: 2em;"),
         Table("SELECT id, playerName, won, generation, insertTime FROM metaData ORDER BY id desc LIMIT 10"),
         backgroundImageAttribution()
     )
@@ -290,7 +293,8 @@ async def page2(request: Request):
 
     currentTables=Div(*tableViews.get(sessionId,[]))
 
-    return Main(pageSelect(sessionId),P(style="font-size: 2em; color: #8fffdf"),
+    return Main(pageSelect(sessionId,["","on","",""]),
+                P(style="font-size: 2em; color: #8fffdf"),
                 P(errorMessage, style="color: red;") if errorMessage else None,
                 P(style="font-size: 2em; color: #8fffdf"),
                 Form(
@@ -301,7 +305,7 @@ async def page2(request: Request):
                         name="action",
                         style="flex-grow: 1; margin-right: 10px; height: 52px; max-width: 200px; padding: 15px 15px;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15px 15px; border-radius: 10px;"),
-                    style="display: flex; align-items: stretch; padding: 20px;",
+                    style="display: flex; align-items: stretch; justify-content: center; padding: 20px;",
                     action="/HandleAction", method="post"),
                     
                     currentTables,
@@ -322,13 +326,14 @@ async def page3(request: Request):
     if sessionId not in graphView:
         graphView[sessionId]=()
         
-    return Main(pageSelect(sessionId),P(style="font-size: 1.2em;"),
+    return Main(pageSelect(sessionId, ["","","on",""]),
+                P(style="font-size: 1.2em;"),
                 P(errorMessage, style="color: red;") if errorMessage else None,
                 P(style="font-size: 1.2em;"),
                 Form(
                     Input(type="text", name="data", placeholder=f"Enter {graphsQuestions[len(graphData[sessionId])]}:", style="flex-grow: 1; margin-right: 10px; max-width: 50%;"),
                     Button("Submit", style="height: 52px; width: 200px; padding: 15 15px; border-radius: 10px;"),
-                    style="display: flex; align-items: stretch; padding: 20px;",
+                    style="display: flex; align-items: stretch; justify-content: center; padding: 20px;",
                     action="/Graph", 
                     method="post"),
                     graphView[sessionId],
@@ -349,20 +354,23 @@ paragraphs.append("select * from ScoreByCategory (selects all columns from the S
 paragraphs.append("If you don't understand this or you want more complex queries then there is a number of great mysql select tutorials online")
 paragraphs.append("Choose a table and from that table a column that will be the x axis data then choose a table and then a column that will be the y axis data. This is for seeing the relationship between two columns. For example:")
 paragraphs.append((Li("Input1: ScoreByGeneration"),Li("Input2: cities"),Li("Input3: ScoreByGeneration"),Li("Input4: greeneries")))
-paragraphs.append("This will produce a scatter plot with the points from cities on the x axis and the points from greeneries on the y axis. The two tables do not have to be the same table and this only work if they are both floats/integers!")
-paragraphs.append("")
+paragraphs.append("This will produce a scatter plot with the points from cities on the x axis and the points from greeneries on the y axis. The two tables do not have to be the same table and this will remove all elements that aren't floats and if either x or y data is empty then it will return an error that looks something like this:")
+paragraphs.append("Error in processGraphData: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (19,) inhomogeneous part.")
+paragraphs.append("This means that you have entered columns for which there is either no data, or no data that is a float. ")
+
 @app.get("/info")
 async def helpAndInfo(request: Request):
     sessionId=getOrCreateSessionId(request)
     return (
-        pageSelect(sessionId),
+        pageSelect(sessionId, ["","","","on"]),
+        P("", style="height: 2vh"), #this text is here to add padding which wasn't working because of margin: auto
         Div(
             H2("Overview"),
             P(paragraphs[0]),
             H2("Usage"),
             H4("Insert"),
             P(paragraphs[8]),
-            H4("Game Statistics Tabless"),
+            H4("Game Statistics Tables"),
             P(paragraphs[9]),
             Ul(*[Li(text) for text in paragraphs[9:12]]),
             P(paragraphs[12]),
@@ -370,10 +378,12 @@ async def helpAndInfo(request: Request):
             P(paragraphs[13]),
             Ul(paragraphs[14]),
             P(paragraphs[15]),
+            Ul(paragraphs[16]),
+            P(paragraphs[17]),
             H2("List of Tables"),
             P(paragraphs[1]),
             Ul(*[Li(text) for text in paragraphs[2:7]]),
-            style="background-color: white !important; text-shadow: 0px 0px 0px black; padding: 75px 150px 100px 150px;"
+            style="margin: auto; background-color: white; !important; text-shadow: 0px white !important; padding: 20px; width: 75vw; border-radius: 20px;"
             ),
         backgroundImageAttribution()
         ),
@@ -469,7 +479,6 @@ def downloadCSV(data:str):
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=data.csv"}
     )
-
 @app.post("/Table")
 async def printTable(data:str, request: Request):
     sessionId=getOrCreateSessionId(request)
@@ -479,7 +488,8 @@ async def printTable(data:str, request: Request):
     return RedirectResponse(url=f"/GStatsT?session_id={sessionId}", status_code=303)
 
 @app.post("/Graph")
-async def processGraphData(data:str, request: Request):
+def processGraphData(data:str, request: Request):
+    
     try:
         sessionId=getOrCreateSessionId(request)
 
@@ -489,11 +499,30 @@ async def processGraphData(data:str, request: Request):
             graphView[sessionId]=()
 
         graphData[sessionId].append(data)
+        
         if len(graphData[sessionId])==4:
+
+
             labels=[graphData[sessionId][1],graphData[sessionId][3]]
             xData=dataFetch(graphData[sessionId][0],graphData[sessionId][1])
             yData=dataFetch(graphData[sessionId][2],graphData[sessionId][3])
-            print(graphView[sessionId])
+        
+            for d in xData:
+                try:
+                    float(d[0])
+                except TypeError:
+                    xData=[i for i in xData if i !=d]
+
+            for e in yData:
+                try:
+                    float(e[0])
+                except TypeError:
+                    yData=[i for i in yData if i !=e]
+
+            for i in range(len(yData)):
+                yData[i]=float(yData[i][0])
+                xData[i]=float(xData[i][0])
+
             graphView[sessionId]=Img(
                 src=scatter2columns(xData,yData,labels), 
                 alt="Scatter", 
