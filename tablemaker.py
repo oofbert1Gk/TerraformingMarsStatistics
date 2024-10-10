@@ -63,7 +63,7 @@ tableDescription = (
 tableDescription2 = (
     "CREATE TABLE `ScoreByCategory` ("
     "  id MEDIUMINT NOT NULL AUTO_INCREMENT,"
-    "  `tr` SMALLINT SIGNED,"
+    "  `tr` SMALLINT,"
     "  `milestones` SMALLINT ,"
     "  `awards` SMALLINT ,"
     "  `greeneries` SMALLINT ,"
@@ -73,8 +73,8 @@ tableDescription2 = (
     "  `mines` SMALLINT ,"
     "  `roads` SMALLINT ,"
     "  `pathfinders` SMALLINT ," #Planetary Tracks
-    "  `cards` SMALLINT SIGNED,"
-    "  `total` SMALLINT SIGNED,"
+    "  `cards` SMALLINT,"
+    "  `total` SMALLINT,"
     "  PRIMARY KEY (id)"
     ") ENGINE=InnoDB")
 

@@ -2,7 +2,7 @@ A terraforming mars herokuapp scorescraper and data storage system using mariadb
 
 Instructions for Building Yourself:
 
-Note: These instructions are experimental and they are for linux debian 11, they might not work if you are on a another system and they are nto very detailed and may have omissions 
+Note: These instructions are experimental and they are for linux debian 11, they might not work if you are on a another system and they are not very detailed and may have omissions 
 
 1. Install Dependencies
 
